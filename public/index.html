@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>smart-school-lib</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>📚 smart-school-lib 📚</h1>
+    <p>A School Library Management Platform for Librarians, Teachers, and Students</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Overview</h2>
+      <p>This project is a school library system that supports the management of users, books, authors, loans, and reading suggestions. The system accommodates three user roles: <span class="role">Librarians</span>, <span class="role">Teachers</span>, and <span class="role">Students</span>, each with specific permissions and functionalities.</p>
+    </section>
+
+    <section>
+      <h2>User Roles and Functionalities</h2>
+
+      <h3><span class="role">All Users (Librarians, Teachers, Students)</span></h3>
+      <ul>
+        <li>Register, update, and delete their own profile</li>
+        <li>Access their own profile information and history</li>
+      </ul>
+
+      <h3><span class="role">Librarians</span></h3>
+      <ul>
+        <li>Register, update, delete, and view any user’s profile and history</li>
+        <li>Manage books (register, update, delete, list, and view information)</li>
+        <li>Manage authors (register, update, delete, list, and view books by author)</li>
+        <li>Manage loans (register, update, delete, list, and view loan details)</li>
+        <li>Manage reading suggestions for any teacher user</li>
+      </ul>
+
+      <h3><span class="role">Teachers</span></h3>
+      <ul>
+        <li>View books and authors (including their books)</li>
+        <li>Register their own book loans and view loan information</li>
+        <li>Manage their own reading suggestions (register, update, delete, view)</li>
+      </ul>
+
+      <h3><span class="role">Students</span></h3>
+      <ul>
+        <li>View books and authors (including their books)</li>
+        <li>Register their own book loans and view loan information</li>
+      </ul>
+
+      <h3><span class="role">User Stories</span></h3>
+      <ul>
+        <li>
+            <a href="https://docs.google.com/document/d/1zH6v8fPebHEJn715jl1Pwbij67aUmMMbtw3pUoYY_Ec/edit?usp=sharing" 
+               class="custom-link"
+               target="_blank"
+               rel="noopener noreferrer">
+               Click here
+            </a>
+        </li>
+      </ul>
+
+      <h3><span class="role">Use Cases</span></h3>
+      <ul>
+        <li>
+            <a href="https://lucid.app/lucidchart/2d017e0e-b475-4f5c-93c1-c756e3aa27ff/edit?viewport_loc=-3070%2C832%2C6932%2C3238%2C0_0&invitationId=inv_3505f954-3718-4242-941d-bbd7e4e4ceda" 
+               class="custom-link"
+               target="_blank"
+               rel="noopener noreferrer">
+               Click here
+            </a>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Technologies Used</h2>
+      <ul>
+        <li>Node.js</li>
+        <li>Express.js</li>
+        <li>RESTful API Architecture</li>
+        <li>PostgreSQL</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Future Improvements</h2>
+      <ul>
+        <li>Web interface for librarians, students and teachers</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Miniteste 01 - Pergunta 01</h2>
+      <ul>
+        <li>E se quiséssemos garantir que os objetos req e res fossem sempre utilizados da forma correta, 
+            sem depender só da nossa memória ou da sorte? Com base no que discutimos sobre TypeScript, 
+            como ele poderia nos ajudar nesse cenário?</li>
+            <p>TypeScript usa tipagem estática. Assim, é possível declarar os tipos dos parâmetros de rota, 
+               dos dados enviados no corpo da requisição, dos parâmetros da URL e das respostas. Isso permite 
+               que o editor de código mostre sugestões e erros automaticamente, evitando comportamentos inesperados.
+               Isso traz mais segurança, facilita a leitura do código e reduz a chance de bugs. Logo, ao digitar req ou res, 
+               o editor eventualmente deve mostrar exatamente o que está disponível nas interfaces de req e res, 
+               tais como req.body, req.params, req.query, res.send, dentre outros. Portanto, isso evita erros em 
+               tempo de execução e força a consistência no uso desses objetos.
+            </p>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Miniteste 01 - Pergunta 02</h2>
+      <ul>
+        <li>Como você imaginaria esse mesmo código escrito em TypeScript? O que mudaria
+            na estrutura do código? Quais benefícios você esperaria ter? E quais possíveis
+            dificuldades surgiriam?</li>
+            <p>Escrever o mesmo código em TypeScript traria algumas mudanças estruturais importantes. 
+               Ao invés de usar require, usaríamos import, e precisaríamos instalar os tipos do Express. 
+               O arquivo principal do servidor passaria a ser um server.ts e seria necessário configurar 
+               o TypeScript com um tsconfig.json. Na estrutura do código, cada função que utiliza req e res 
+               passaria a declarar explicitamente seus tipos: Request, Response. Como benefícios disso, temos: 
+               detecção precoce de erros ao compilar, maior clareza e autocompletar no editor, e refatorações 
+               mais seguras. Dentre as dificuldades, temos: o aprendizado inicial e a necessidade de tipar 
+               manualmente objetos complexos (como req.body), o que pode demandar mais tempo e tornar o código 
+               mais verboso. O server.ts seria assim:
+               <pre><code>
+               import express, { Request, Response } from "express";
+               import path from "path";
+               const app = express();
+               const port = 2025;
+               app.use(express.static(path.join(__dirname, "public")));
+               app.get("/", (req: Request, res: Response) => {
+                  res.send("smart-school-lib");
+               });
+               app.listen(port, () => {
+                  console.log(`Server running at http://localhost:${port}/index.html`);
+               });
+              </code></pre>
+            </const>
+      </ul>
+    </section>
+    
+  </main>
+
+  <footer>
+    &copy; 2025 smart-school-lib — Federal University of Campina Grande, Computer Science Course
+  </footer>
+</body>
+</html>
