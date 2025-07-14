@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: sobraldearruda
+      POSTGRES_PASSWORD: smartschoollib
+      POSTGRES_DB: smart_school_lib
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  app:
+    build: .
+    container_name: smart_school_app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_DIALECT: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: sobraldearruda
+      DB_PASS: smartschoollib
+      DB_NAME: smart_school_lib
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
