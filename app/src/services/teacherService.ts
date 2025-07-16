@@ -1,4 +1,3 @@
-/*
 import { TeacherRepository } from "../repositories/teacherRepository";
 import { Teacher } from "../models/teacher";
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
@@ -32,19 +31,18 @@ export class TeacherService {
     return await this.repository.getAllTeachers();
   }
 
-  async getStudentByRegistration(userRegistration: string): Promise<Teacher> {
+  async getTeacherByRegistration(userRegistration: string): Promise<Teacher> {
     return await this.repository.getTeacherByRegistration(userRegistration);
   }
 
-  async updateStudent(userRegistration: string, updatedData: Partial<Omit<Student, "userId">>): Promise<Student> {
+  async updateTeacher(userRegistration: string, updatedData: Partial<Omit<Teacher, "userId">>): Promise<Teacher> {
     if (Object.keys(updatedData).length === 0) {
       throw new Error("No content informed.");
     }
-    return await this.repository.updateStudent(userRegistration, updatedData);
+    return await this.repository.updateTeacher(userRegistration, updatedData);
   }
 
-  async deleteStudent(userRegistration: string): Promise<Student> {
-    return await this.repository.deleteStudent(userRegistration);
+  async deleteTeacher(userRegistration: string): Promise<Teacher> {
+    return await this.repository.deleteTeacher(userRegistration);
   }
 }
-*/
