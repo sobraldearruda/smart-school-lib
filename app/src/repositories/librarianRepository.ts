@@ -1,5 +1,5 @@
-import { Librarian } from "../models/Librarian";
-import { UserNotFoundException } from "../exceptions/UserNotFoundException";
+import { Librarian } from "../models/librarian";
+import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class LibrarianRepository {
 
