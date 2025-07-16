@@ -1,5 +1,5 @@
-import { Teacher } from "../models/Teacher";
-import { UserNotFoundException } from "../exceptions/UserNotFoundException";
+import { Teacher } from "../models/teacher";
+import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class TeacherRepository {
 

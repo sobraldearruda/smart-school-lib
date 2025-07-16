@@ -1,15 +1,15 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database';
-import { User } from '../models/User';
+import { User } from './user';
 
-export class Librarian extends User {
+export class Student extends User {
   public userId!: number;
   public userName!: string;
   public userEmail!: string;
   public userRegistration!: string;
 }
 
-Librarian.init(
+Student.init(
   {
     userId: {
       type: DataTypes.INTEGER,
@@ -33,7 +33,7 @@ Librarian.init(
   },
   {
     sequelize,
-    tableName: 'librarians',
+    tableName: 'students',
     timestamps: false,
   }
 );
