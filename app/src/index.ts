@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as dotenv from "dotenv";
 import  sequelize from "./config/database";
-import { UserRepository } from "./repositories/userRepository";
+import { UserRepository } from "./repositories/StudentRepository";
 
 dotenv.config();
 
