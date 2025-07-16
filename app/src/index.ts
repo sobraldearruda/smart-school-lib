@@ -1,19 +1,19 @@
 import * as express from "express";
 import * as dotenv from "dotenv";
 import  sequelize from "./config/database";
-import { UserRepository } from "./repositories/StudentRepository";
+import { StudentRepository } from "./repositories/studentRepository";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-const userRepo = new UserRepository();
+const studentRepo = new StudentRepository();
 
 app.post("/users", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const user = await userRepo.createUser(name, email, password);
+    const { name, email, registration } = req.body;
+    const user = await studentRepo.createStudent(name, email, registration);
     res.json(user); // Retorna o usuário criado
   } catch (error: any) {
     res.status(500).json({ message: "Erro ao criar o usuário", error: error.message });
@@ -22,7 +22,7 @@ app.post("/users", async (req, res) => {
 
 app.get("/users", async (req, res) => {
   try {
-    const users = await userRepo.getAllUsers();
+    const users = await studentRepo.getAllStudents();
     res.json(users); // Retorna todos os usuários
   } catch (error: any) {
     res.status(500).json({ message: "Erro ao obter os usuários", error: error.message });
