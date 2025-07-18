@@ -1,11 +1,11 @@
 import * as express from "express";
 import * as dotenv from "dotenv";
-import  sequelize from "./config/database";
+import sequelize from "./config/database";
 import studentRoutes from "./routes/studentRoutes";
 import teacherRoutes from "./routes/teacherRoutes";
 import librarianRoutes from "./routes/librarianRoutes";
 import bookRoutes from "./routes/bookRoutes";
-//import authorRoutes from "./routes/authorRoutes";
+import authorRoutes from "./routes/authorRoutes";
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ app.use("/api", studentRoutes);
 app.use("/api", teacherRoutes);
 app.use("/api", librarianRoutes);
 app.use("/api", bookRoutes);
-//app.use("/api", authorRoutes);
+app.use("/api", authorRoutes);
 
 const PORT = process.env.PORT || 3000;
 
