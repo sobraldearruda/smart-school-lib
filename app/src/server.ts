@@ -1,6 +1,9 @@
-import * as express from "express";
+import express from "express";
 import * as dotenv from "dotenv";
 import sequelize from "./config/database";
+import * as swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
+
 import studentRoutes from "./routes/studentRoutes";
 import teacherRoutes from "./routes/teacherRoutes";
 import librarianRoutes from "./routes/librarianRoutes";
@@ -12,6 +15,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", studentRoutes);
 app.use("/api", teacherRoutes);
 app.use("/api", librarianRoutes);
