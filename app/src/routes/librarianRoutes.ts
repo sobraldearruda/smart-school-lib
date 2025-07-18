@@ -4,7 +4,7 @@ import { LibrarianController } from "../controllers/librarianController";
 const router = Router();
 const controller = new LibrarianController();
 
-router.post("/librarans", controller.createLibrarian);
+router.post("/librarians", controller.createLibrarian);
 router.get("/librarians", controller.getAllLibrarians);
 router.get("/librarians/:userRegistration", controller.getLibrarianByRegistration);
 router.put("/librarians/:userRegistration", controller.updateLibrarian);
