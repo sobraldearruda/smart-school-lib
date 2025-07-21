@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
-//import { Author } from "../models/author";
+import { Author } from "../models/author";
 
 export interface BookAttributes {
   bookId: number;
@@ -16,7 +16,14 @@ export class Book extends Model<BookAttributes, BookCreationAttributes> implemen
   public bookTitle!: string;
   public bookIsbn!: string;
   public bookPublicationYear!: string;
-  //public bookAuthors?: Author[];
+  public bookAuthors?: Author[];
+
+  public setAuthors!: (authors: number[] | Author[] | null, options?: any) => Promise<void>;
+  public getAuthors!: () => Promise<Author[]>;
+  public addAuthor!: (author: Author | number) => Promise<void>;
+  public addAuthors!: (authors: Author[] | number[]) => Promise<void>;
+  public removeAuthor!: (author: Author | number) => Promise<void>;
+  public hasAuthor!: (author: Author | number) => Promise<boolean>;
 }
 
 Book.init(
@@ -47,3 +54,14 @@ Book.init(
     timestamps: false,
   }
 );
+
+Book.belongsToMany(Author, {
+  through: "book_authors",
+  foreignKey: "bookId",
+  otherKey: "authorId",
+});
+Author.belongsToMany(Book, {
+  through: "book_authors",
+  foreignKey: "authorId",
+  otherKey: "bookId",
+});

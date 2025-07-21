@@ -1,14 +1,17 @@
 import { Book } from "../models/book";
+import { Author } from "../models/author";
 import { BookNotFoundException } from "../exceptions/bookNotFoundException";
 
 export class BookRepository {
 
-  async createBook(bookTitle: string, bookIsbn: string, bookPublicationYear: string) {
-    return await Book.create({
+  async createBook(bookTitle: string, bookIsbn: string, bookPublicationYear: string, bookAuthors: Author[]) {
+    const book = await Book.create({
       bookTitle,
       bookIsbn,
-      bookPublicationYear,
+      bookPublicationYear
     });
+    book.setAuthors(bookAuthors);
+    return book;
   }
   
   async getAllBooks() {

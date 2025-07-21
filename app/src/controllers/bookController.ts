@@ -11,8 +11,8 @@ export class BookController {
 
   createBook = async (req: Request, res: Response) => {
     try {
-      const { bookTitle, bookIsbn, bookPublicationYear } = req.body;
-      const book = await this.service.createBook(bookTitle, bookIsbn, bookPublicationYear);
+      const { bookTitle, bookIsbn, bookPublicationYear, bookAuthors } = req.body;
+      const book = await this.service.createBook(bookTitle, bookIsbn, bookPublicationYear, bookAuthors);
       res.status(201).json(book);
     } catch (error) {
       res.status(500).json({ message: "It is not possible to create book.", error: (error as Error).message });
