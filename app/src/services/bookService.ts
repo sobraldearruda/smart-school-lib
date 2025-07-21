@@ -1,5 +1,6 @@
 import { BookRepository } from "../repositories/bookRepository";
 import { Book } from "../models/book";
+import { Author } from "../models/author";
 import { BookNotFoundException } from "../exceptions/bookNotFoundException";
 import { DuplicateRegistrationException } from "../exceptions/duplicateRegistrationException";
 
@@ -10,7 +11,7 @@ export class BookService {
     this.repository = new BookRepository();
   }
 
-  async createBook(bookTitle: string, bookIsbn: string, bookPublicationYear: string): Promise<Book> {
+  async createBook(bookTitle: string, bookIsbn: string, bookPublicationYear: string, bookAuthors: Author[]): Promise<Book> {
     try {
       const existing = await this.repository.getBookByTitle(bookTitle);
       if (existing) {
@@ -21,10 +22,21 @@ export class BookService {
         throw error;
       }
     }
-    if (!bookTitle || !bookIsbn || !bookPublicationYear) {
-      throw new Error("All fields required.");
+
+    if (!bookTitle || !bookIsbn || !bookPublicationYear || !bookAuthors?.length) {
+      throw new Error("All fields and at least one author are required.");
     }
-    return await this.repository.createBook(bookTitle.trim(), bookIsbn.trim(), bookPublicationYear.trim());
+
+    const book = await this.repository.createBook(
+      bookTitle.trim(),
+      bookIsbn.trim(),
+      bookPublicationYear.trim(),
+      bookAuthors
+    );
+
+    await book.setAuthors(bookAuthors);
+    
+    return book;
   }
 
   async getAllBooks(): Promise<Book[]> {
