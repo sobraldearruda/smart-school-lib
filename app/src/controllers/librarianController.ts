@@ -61,7 +61,7 @@ export class LibrarianController {
     try {
       const { userRegistration } = req.params;
       const deletedLibrarian = await this.service.deleteLibrarian(userRegistration);
-      res.status(200).json({ message: "Teacher deleted successfully.", deletedLibrarian });
+      res.status(200).json({ message: "Librarian deleted successfully.", deletedLibrarian });
     } catch (error) {
       if (error instanceof UserNotFoundException) {
         res.status(404).json({ message: error.message });

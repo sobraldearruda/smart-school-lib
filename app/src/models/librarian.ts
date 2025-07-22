@@ -7,6 +7,13 @@ export class Librarian extends User {
   public userName!: string;
   public userEmail!: string;
   public userRegistration!: string;
+
+  public setLibrarians!: (librarians: number[] | Librarian[] | null, options?: any) => Promise<void>;
+  public getLibrarians!: () => Promise<Librarian[]>;
+  public addLibrarian!: (librarian: Librarian | number) => Promise<void>;
+  public addLibrarians!: (librarians: Librarian[] | number[]) => Promise<void>;
+  public removeLibrarian!: (librarian: Librarian | number) => Promise<void>;
+  public hasLibrarian!: (librarian: Librarian | number) => Promise<boolean>;
 }
 
 Librarian.init(

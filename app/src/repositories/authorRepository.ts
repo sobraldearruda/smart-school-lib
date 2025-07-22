@@ -4,10 +4,11 @@ import { AuthorNotFoundException } from "../exceptions/authorNotFoundException";
 export class AuthorRepository {
 
   async createAuthor(authorName: string, authorBiography?: string) {
-    return await Author.create({
+    const author =  await Author.create({
       authorName,
       authorBiography
     });
+    return author;
   }
   
   async getAllAuthors() {

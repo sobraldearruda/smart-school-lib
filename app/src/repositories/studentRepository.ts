@@ -4,11 +4,12 @@ import { UserNotFoundException } from "../exceptions/userNotFoundException";
 export class StudentRepository {
 
   async createStudent(userName: string, userEmail: string, userRegistration: string) {
-    return await Student.create({
+    const student =  await Student.create({
       userName,
       userEmail,
-      userRegistration,
+      userRegistration
     });
+    return student;
   }
   
   async getAllStudents() {

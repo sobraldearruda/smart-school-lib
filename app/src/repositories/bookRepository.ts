@@ -10,7 +10,7 @@ export class BookRepository {
       bookIsbn,
       bookPublicationYear
     });
-    book.setAuthors(bookAuthors);
+    await book.setAuthors(bookAuthors);
     return book;
   }
   
