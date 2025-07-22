@@ -4,11 +4,12 @@ import { UserNotFoundException } from "../exceptions/userNotFoundException";
 export class LibrarianRepository {
 
   async createLibrarian(userName: string, userEmail: string, userRegistration: string) {
-    return await Librarian.create({
+    const librarian =  await Librarian.create({
       userName,
       userEmail,
-      userRegistration,
+      userRegistration
     });
+    return librarian;
   }
   
   async getAllLibrarians() {
