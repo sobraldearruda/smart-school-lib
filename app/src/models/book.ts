@@ -18,7 +18,7 @@ export class Book extends Model<BookAttributes, BookCreationAttributes> implemen
   public bookPublicationYear!: string;
   public bookAuthors?: Author[];
 
-  public setAuthors!: (authors: number[] | Author[] | null, options?: any) => Promise<void>;
+  public setAuthors!: (authors: Author[] | Author[] | null, options?: any) => Promise<void>;
   public getAuthors!: () => Promise<Author[]>;
   public addAuthor!: (author: Author | number) => Promise<void>;
   public addAuthors!: (authors: Author[] | number[]) => Promise<void>;

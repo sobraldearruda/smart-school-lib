@@ -11,7 +11,7 @@ export class BookService {
     this.repository = new BookRepository();
   }
 
-  async createBook(bookTitle: string, bookIsbn: string, bookPublicationYear: string, bookAuthors: Author[]): Promise<Book> {
+  async createBook(bookTitle: string, bookIsbn: string, bookPublicationYear: string, bookAuthors: {authorName: string}[]): Promise<Book> {
     try {
       const existing = await this.repository.getBookByTitle(bookTitle);
       if (existing) {
@@ -27,14 +27,21 @@ export class BookService {
       throw new Error("All fields and at least one author are required.");
     }
 
+    const authorNames = bookAuthors.map(author => author.authorName.trim());
+    const authors = await Author.findAll({
+      where: { authorName: authorNames }
+    });
+
+    if (authors.length !== authorNames.length) {
+      throw new Error("One or more authors not found.");
+    }
+
     const book = await this.repository.createBook(
       bookTitle.trim(),
       bookIsbn.trim(),
       bookPublicationYear.trim(),
-      bookAuthors
+      authors
     );
-
-    await book.setAuthors(bookAuthors);
     
     return book;
   }
