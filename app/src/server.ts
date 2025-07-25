@@ -3,6 +3,16 @@ import * as dotenv from "dotenv";
 import sequelize from "./config/database";
 import * as swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
+import { Seeder } from "./seeders/seeder";
+
+import "./models/teacher";
+import "./models/student";
+import "./models/librarian";
+import "./models/book";
+import "./models/author";
+import { setupAssociations } from "./models/associations";
+
+setupAssociations();
 
 import studentRoutes from "./routes/studentRoutes";
 import teacherRoutes from "./routes/teacherRoutes";
@@ -24,11 +34,13 @@ app.use("/api", authorRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-sequelize.sync({ force: true }).then(() => {
-  console.log("Banco de dados conectado!");
+(async () => {
+  await sequelize.sync({ alter: true });
+  console.log("Banco de dados sincronizado com sucesso!");
+  await Seeder();
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
   });
-}).catch((error) => {
+})().catch((error) => {
   console.error("Erro ao conectar ao banco de dados:", error);
 });
