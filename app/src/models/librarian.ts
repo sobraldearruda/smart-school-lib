@@ -7,6 +7,7 @@ export class Librarian extends User {
   public userName!: string;
   public userEmail!: string;
   public userRegistration!: string;
+  public userPassword!: string;
 
   public setLibrarians!: (librarians: number[] | Librarian[] | null, options?: any) => Promise<void>;
   public getLibrarians!: () => Promise<Librarian[]>;
@@ -36,6 +37,10 @@ Librarian.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    userPassword: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {

@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { StudentController } from "../controllers/studentController";
+import { StudentService } from "../services/studentService";
+
+const studentService = new StudentService();
+const studentController = new StudentController(studentService);
 
 const router = Router();
-const controller = new StudentController();
 
 /**
  * @swagger
@@ -20,6 +23,7 @@ const controller = new StudentController();
  *               - userName
  *               - userEmail
  *               - userRegistration
+ *               - userPassword
  *             properties:
  *               userName:
  *                 type: string
@@ -27,13 +31,21 @@ const controller = new StudentController();
  *                 type: string
  *               userRegistration:
  *                 type: string
+ *               userPassword:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Student created successfully
- *       500:
- *         description: Internal server error
+ *       400:
+ *         description: Bad Request
  */
-router.post("/students", controller.createStudent);
+router.post("/students", async (req, res, next) => {
+    try {
+        await studentController.createStudent(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
@@ -51,6 +63,8 @@ router.post("/students", controller.createStudent);
  *               items:
  *                 type: object
  *                 properties:
+ *                   userId:
+ *                     type: number
  *                   userName:
  *                     type: string
  *                   userEmail:
@@ -60,47 +74,19 @@ router.post("/students", controller.createStudent);
  *       500:
  *         description: Internal server error
  */
-router.get("/students", controller.getAllStudents);
+router.get("/students", async (req, res, next) => {
+    try {
+        await studentController.getAllStudents(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /students/{userRegistration}:
  *   get:
- *     summary: Get a student by registration
- *     tags: [Students]
- *     parameters:
- *       - in: path
- *         name: userRegistration
- *         required: true
- *         schema:
- *           type: string
- *         description: Student registration number
- *     responses:
- *       200:
- *         description: Student found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 userName:
- *                   type: string
- *                 userEmail:
- *                   type: string
- *                 userRegistration:
- *                   type: string
- *       404:
- *         description: Student not found
- *       500:
- *         description: Internal server error
- */
-router.get("/students/:userRegistration", controller.getStudentByRegistration);
-
-/**
- * @swagger
- * /students/{userRegistration}:
- *   put:
- *     summary: Update a student by registration
+ *     summary: Get a student by registration (Authentication required)
  *     tags: [Students]
  *     parameters:
  *       - in: path
@@ -115,7 +101,53 @@ router.get("/students/:userRegistration", controller.getStudentByRegistration);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - userPassword
  *             properties:
+ *               userPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Student found
+ *       404:
+ *         description: Student not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/students/:userRegistration", async (req, res, next) => {
+    try {
+        await studentController.getStudentByRegistration(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /students/{userRegistration}:
+ *   put:
+ *     summary: Update a student by registration (Authentication required)
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: userRegistration
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Student registration number
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userPassword
+ *               - userName
+ *               - userEmail
+ *             properties:
+ *               userPassword:
+ *                 type: string
  *               userName:
  *                 type: string
  *               userEmail:
@@ -128,13 +160,19 @@ router.get("/students/:userRegistration", controller.getStudentByRegistration);
  *       500:
  *         description: Internal server error
  */
-router.put("/students/:userRegistration", controller.updateStudent);
+router.put("/students/:userRegistration", async (req, res, next) => {
+    try {
+        await studentController.updateStudent(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /students/{userRegistration}:
  *   delete:
- *     summary: Delete a student by registration
+ *     summary: Delete a student by registration (Authentication required)
  *     tags: [Students]
  *     parameters:
  *       - in: path
@@ -143,6 +181,17 @@ router.put("/students/:userRegistration", controller.updateStudent);
  *         schema:
  *           type: string
  *         description: Student registration number
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userPassword
+ *             properties:
+ *               userPassword:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Student deleted successfully
@@ -160,6 +209,62 @@ router.put("/students/:userRegistration", controller.updateStudent);
  *       500:
  *         description: Internal server error
  */
-router.delete("/students/:userRegistration", controller.deleteStudent);
+router.delete("/students/:userRegistration", async (req, res, next) => {
+    try {
+        await studentController.deleteStudent(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /students/login:
+ *   post:
+ *     summary: Authenticates a student and returns a token
+ *     tags: [Students]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userRegistration
+ *               - userPassword
+ *             properties:
+ *               userRegistration:
+ *                 type: string
+ *               userPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful authentication
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: number
+ *                     userRegistration:
+ *                       type: string
+ *                     userEmail:
+ *                       type: string
+ *       401:
+ *         description: Invalid credentials
+ */
+router.post("/students/login", async (req, res, next) => {
+    try {
+        await studentController.loginStudent(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 export default router;

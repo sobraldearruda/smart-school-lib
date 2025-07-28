@@ -7,6 +7,7 @@ export class Teacher extends User {
   public userName!: string;
   public userEmail!: string;
   public userRegistration!: string;
+  public userPassword!: string;
 
   public setTeachers!: (teachers: number[] | Teacher[] | null, options?: any) => Promise<void>;
   public getTeachers!: () => Promise<Teacher[]>;
@@ -36,6 +37,10 @@ Teacher.init(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    userPassword: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
