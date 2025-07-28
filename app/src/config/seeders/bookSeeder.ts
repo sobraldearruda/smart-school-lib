@@ -5,19 +5,19 @@ export async function BookSeeder() {
   await Book.destroy({ where: {} });
   await Book.bulkCreate([
     {
-      bookTitle: "Harry Potter and the Sorcerer's Stone",
+      bookTitle: "Memórias Póstumas de Brás Cubas",
       bookIsbn: "9780747532699",
-      bookPublicationYear: "1997",
+      bookPublicationYear: "1881",
     },
     {
-      bookTitle: "The Hobbit",
+      bookTitle: "Casos de Família",
       bookIsbn: "9780618968633",
-      bookPublicationYear: "1937",
+      bookPublicationYear: "1960",
     },
     {
-      bookTitle: "A Game of Thrones",
+      bookTitle: "Olhos D'água",
       bookIsbn: "9780553573404",
-      bookPublicationYear: "1996",
+      bookPublicationYear: "2014",
     },
   ]);
   console.log("Books seeded.");

@@ -4,9 +4,9 @@ export async function AuthorSeeder() {
   console.log("Seeding Authors...");
   await Author.destroy({ where: {} });
   await Author.bulkCreate([
-    { authorName: "J.K. Rowling" },
-    { authorName: "J.R.R. Tolkien" },
-    { authorName: "George R.R. Martin" },
+    { authorName: "Machado de Assis" },
+    { authorName: "Clarice Lispector" },
+    { authorName: "Conceição Evaristo" },
   ]);
   console.log("Authors seeded.");
 }

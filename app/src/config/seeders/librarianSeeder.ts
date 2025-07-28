@@ -4,8 +4,8 @@ export async function LibrarianSeeder() {
   console.log("Seeding Librarians...");
   await Librarian.destroy({ where: {} });
   await Librarian.bulkCreate([
-    { userName: "Librarian Joy", userEmail: "joy@library.com", userRegistration: "L12345" },
-    { userName: "Librarian Jenny", userEmail: "jenny@library.com", userRegistration: "L67890" },
+    { userName: "Ana Maria", userEmail: "ana.maria@email.com", userRegistration: "12345" },
+    { userName: "José Carlos", userEmail: "jose.carlos@email.com", userRegistration: "67890" },
   ]);
   console.log("Librarians seeded.");
 }
