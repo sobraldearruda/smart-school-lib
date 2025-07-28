@@ -3,71 +3,79 @@ import { LibrarianService } from "../services/librarianService";
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class LibrarianController {
-  private service: LibrarianService;
 
-  constructor() {
-    this.service = new LibrarianService();
+  private LibrarianService: LibrarianService;
+
+  constructor(LibrarianService: LibrarianService) {
+    this.LibrarianService = LibrarianService;
   }
 
-  createLibrarian = async (req: Request, res: Response) => {
+  async createLibrarian(req: Request, res: Response): Promise<Response> {
     try {
-      const { userName, userEmail, userRegistration } = req.body;
-      const librarian = await this.service.createLibrarian(userName, userEmail, userRegistration);
-      res.status(201).json(librarian);
-    } catch (error) {
-      res.status(500).json({ message: "It is not possible to create user.", error: (error as Error).message });
+      const userData = req.body;
+      const librarian = await this.LibrarianService.createLibrarian(userData);
+      return res.status(201).json(librarian);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
     }
-  };
+  }
 
-  getAllLibrarians = async (_req: Request, res: Response) => {
+  async getAllLibrarians(req: Request, res: Response): Promise<Response> {
     try {
-      const librarians = await this.service.getAllLibrarians();
-      res.status(200).json(librarians);
-    } catch (error) {
-      res.status(500).json({ message: "It is not possible to query users.", error: (error as Error).message });
+      const librarians = await this.LibrarianService.getAllLibrarians();
+      return res.json(librarians);
+    } catch (error: any) {
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  getLibrarianByRegistration = async (req: Request, res: Response) => {
+  async getLibrarianByRegistration(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.params;
-      const librarian = await this.service.getLibrarianByRegistration(userRegistration);
-      res.status(200).json(librarian);
-    } catch (error) {
+      const { userRegistration } = req.body;
+      const librarian = await this.LibrarianService.getLibrarianByRegistration(userRegistration);
+      return res.json(librarian);
+    } catch (error: any) {
       if (error instanceof UserNotFoundException) {
-        res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "It is not possible to query user.", error: (error as Error).message });
+        return res.status(404).json({ message: error.message });
       }
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  updateLibrarian = async (req: Request, res: Response) => {
+  async updateLibrarian(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.params;
       const updatedData = req.body;
-      const librarian = await this.service.updateLibrarian(userRegistration, updatedData);
-      res.status(200).json(librarian);
-    } catch (error) {
+      const { userRegistration } = req.body;
+      const librarian = await this.LibrarianService.updateLibrarian(userRegistration, updatedData);
+      return res.json(librarian);
+    } catch (error: any) {
       if (error instanceof UserNotFoundException) {
-        res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "It is not possible to update user.", error: (error as Error).message });
+        return res.status(404).json({ message: error.message });
       }
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  deleteLibrarian = async (req: Request, res: Response) => {
+  async deleteLibrarian(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.params;
-      const deletedLibrarian = await this.service.deleteLibrarian(userRegistration);
-      res.status(200).json({ message: "Librarian deleted successfully.", deletedLibrarian });
-    } catch (error) {
+      const { userRegistration } = req.body;
+      const deletedLibrarian = await this.LibrarianService.deleteLibrarian(userRegistration);
+      return res.json({ message: "Librarian deleted successfully.", deletedLibrarian });
+    } catch (error: any) {
       if (error instanceof UserNotFoundException) {
-        res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "It is not possible to delete user.", error: (error as Error).message });
+        return res.status(404).json({ message: error.message });
       }
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
+
+  async loginLibrarian(req: Request, res: Response): Promise<Response> {
+    try {
+      const { userRegistration, userPassword } = req.body;
+      const authResult = await this.LibrarianService.authenticate(userRegistration, userPassword);
+      return res.json(authResult);
+    } catch (error: any) {
+      return res.status(401).json({ message: error.message });
+    }
+  }
 }

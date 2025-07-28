@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { LibrarianController } from "../controllers/librarianController";
+import { LibrarianService } from "../services/librarianService";
+
+const librarianService = new LibrarianService();
+const librarianController = new LibrarianController(librarianService);
 
 const router = Router();
-const controller = new LibrarianController();
 
 /**
  * @swagger
@@ -20,6 +23,7 @@ const controller = new LibrarianController();
  *               - userName
  *               - userEmail
  *               - userRegistration
+ *               - userPassword
  *             properties:
  *               userName:
  *                 type: string
@@ -27,13 +31,21 @@ const controller = new LibrarianController();
  *                 type: string
  *               userRegistration:
  *                 type: string
+ *               userPassword:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Librarian created successfully
- *       500:
- *         description: Internal server error
+ *       400:
+ *         description: Bad Request
  */
-router.post("/librarians", controller.createLibrarian);
+router.post("/librarians", async (req, res, next) => {
+    try {
+        await librarianController.createLibrarian(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
@@ -51,6 +63,8 @@ router.post("/librarians", controller.createLibrarian);
  *               items:
  *                 type: object
  *                 properties:
+ *                   userId:
+ *                     type: number
  *                   userName:
  *                     type: string
  *                   userEmail:
@@ -60,47 +74,19 @@ router.post("/librarians", controller.createLibrarian);
  *       500:
  *         description: Internal server error
  */
-router.get("/librarians", controller.getAllLibrarians);
+router.get("/librarians", async (req, res, next) => {
+    try {
+        await librarianController.getAllLibrarians(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /librarians/{userRegistration}:
  *   get:
- *     summary: Get a librarian by registration
- *     tags: [Librarians]
- *     parameters:
- *       - in: path
- *         name: userRegistration
- *         required: true
- *         schema:
- *           type: string
- *         description: Librarian registration number
- *     responses:
- *       200:
- *         description: Librarian found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 userName:
- *                   type: string
- *                 userEmail:
- *                   type: string
- *                 userRegistration:
- *                   type: string
- *       404:
- *         description: Librarian not found
- *       500:
- *         description: Internal server error
- */
-router.get("/librarians/:userRegistration", controller.getLibrarianByRegistration);
-
-/**
- * @swagger
- * /librarians/{userRegistration}:
- *   put:
- *     summary: Update a librarian by registration
+ *     summary: Get a librarian by registration (Authentication required)
  *     tags: [Librarians]
  *     parameters:
  *       - in: path
@@ -115,7 +101,53 @@ router.get("/librarians/:userRegistration", controller.getLibrarianByRegistratio
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - userPassword
  *             properties:
+ *               userPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Librarian found
+ *       404:
+ *         description: Librarian not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/librarians/:userRegistration", async (req, res, next) => {
+    try {
+        await librarianController.getLibrarianByRegistration(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /librarians/{userRegistration}:
+ *   put:
+ *     summary: Update a librarian by registration (Authentication required)
+ *     tags: [Librarians]
+ *     parameters:
+ *       - in: path
+ *         name: userRegistration
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Librarian registration number
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userPassword
+ *               - userName
+ *               - userEmail
+ *             properties:
+ *               userPassword:
+ *                 type: string
  *               userName:
  *                 type: string
  *               userEmail:
@@ -128,13 +160,19 @@ router.get("/librarians/:userRegistration", controller.getLibrarianByRegistratio
  *       500:
  *         description: Internal server error
  */
-router.put("/librarians/:userRegistration", controller.updateLibrarian);
+router.put("/librarians/:userRegistration", async (req, res, next) => {
+    try {
+        await librarianController.updateLibrarian(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /librarians/{userRegistration}:
  *   delete:
- *     summary: Delete a librarian by registration
+ *     summary: Delete a librarian by registration (Authentication required)
  *     tags: [Librarians]
  *     parameters:
  *       - in: path
@@ -143,6 +181,17 @@ router.put("/librarians/:userRegistration", controller.updateLibrarian);
  *         schema:
  *           type: string
  *         description: Librarian registration number
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userPassword
+ *             properties:
+ *               userPassword:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Librarian deleted successfully
@@ -160,6 +209,62 @@ router.put("/librarians/:userRegistration", controller.updateLibrarian);
  *       500:
  *         description: Internal server error
  */
-router.delete("/librarians/:userRegistration", controller.deleteLibrarian);
+router.delete("/librarians/:userRegistration", async (req, res, next) => {
+    try {
+        await librarianController.deleteLibrarian(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /librarians/login:
+ *   post:
+ *     summary: Authenticates a librarian and returns a token
+ *     tags: [Librarians]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userRegistration
+ *               - userPassword
+ *             properties:
+ *               userRegistration:
+ *                 type: string
+ *               userPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful authentication
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: number
+ *                     userRegistration:
+ *                       type: string
+ *                     userEmail:
+ *                       type: string
+ *       401:
+ *         description: Invalid credentials
+ */
+router.post("/librarians/login", async (req, res, next) => {
+    try {
+        await librarianController.loginLibrarian(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 export default router;

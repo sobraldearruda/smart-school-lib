@@ -3,28 +3,19 @@ import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class LibrarianRepository {
 
-  async createLibrarian(userName: string, userEmail: string, userRegistration: string) {
-    const librarian =  await Librarian.create({
-      userName,
-      userEmail,
-      userRegistration
-    });
-    return librarian;
+  async createLibrarian(userData: Partial<Librarian>): Promise<Librarian> {
+    return Librarian.create(userData);
   }
   
   async getAllLibrarians() {
     return await Librarian.findAll();
   }
   
-  async getLibrarianByRegistration(userRegistration: string) {
-    const librarian = await Librarian.findOne({ where: { userRegistration } });
-    if (!librarian) {
-      throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
-    }
-    return librarian;
+  async getLibrarianByRegistration(userRegistration: string): Promise<Librarian | null> {
+    return await Librarian.findOne({ where: { userRegistration } });
   }
   
-  async updateLibrarian(userRegistration: string, updatedData: Partial<Omit<Librarian, "userId">>) {
+  async updateLibrarian(userRegistration: string, updatedData: Partial<Omit<Librarian, "userId">>): Promise<Librarian> {
     const librarian = await Librarian.findOne({ where: { userRegistration } });
     if (!librarian) {
       throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
@@ -32,12 +23,7 @@ export class LibrarianRepository {
     return await librarian.update(updatedData);
   }
 
-  async deleteLibrarian(userRegistration: string) {
-    const librarian = await Librarian.findOne({ where: { userRegistration } });
-    if (!librarian) {
-      throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
-    }
-    await librarian.destroy();
-    return librarian;
+  async deleteLibrarian(userRegistration: string): Promise<string> {
+    return (await Librarian.destroy({ where: { userRegistration } })).toString();
   }
 }

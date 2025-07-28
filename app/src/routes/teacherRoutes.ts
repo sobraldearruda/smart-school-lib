@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { TeacherController } from "../controllers/teacherController";
+import { TeacherService } from "../services/teacherService";
+
+const teacherService = new TeacherService();
+const teacherController = new TeacherController(teacherService);
 
 const router = Router();
-const controller = new TeacherController();
 
 /**
  * @swagger
@@ -20,6 +23,7 @@ const controller = new TeacherController();
  *               - userName
  *               - userEmail
  *               - userRegistration
+ *               - userPassword
  *             properties:
  *               userName:
  *                 type: string
@@ -27,13 +31,21 @@ const controller = new TeacherController();
  *                 type: string
  *               userRegistration:
  *                 type: string
+ *               userPassword:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Teacher created successfully
- *       500:
- *         description: Internal server error
+ *       400:
+ *         description: Bad Request
  */
-router.post("/teachers", controller.createTeacher);
+router.post("/teachers", async (req, res, next) => {
+    try {
+        await teacherController.createTeacher(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
@@ -51,6 +63,8 @@ router.post("/teachers", controller.createTeacher);
  *               items:
  *                 type: object
  *                 properties:
+ *                   userId:
+ *                     type: number
  *                   userName:
  *                     type: string
  *                   userEmail:
@@ -60,13 +74,19 @@ router.post("/teachers", controller.createTeacher);
  *       500:
  *         description: Internal server error
  */
-router.get("/teachers", controller.getAllTeachers);
+router.get("/teachers", async (req, res, next) => {
+    try {
+        await teacherController.getAllTeachers(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /teachers/{userRegistration}:
  *   get:
- *     summary: Get a teacher by registration
+ *     summary: Get a teacher by registration (Authentication required)
  *     tags: [Teachers]
  *     parameters:
  *       - in: path
@@ -74,48 +94,66 @@ router.get("/teachers", controller.getAllTeachers);
  *         required: true
  *         schema:
  *           type: string
- *         description: Teacher registration number
- *     responses:
- *       200:
- *         description: Teacher found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 userName:
- *                   type: string
- *                 userEmail:
- *                   type: string
- *                 userRegistration:
- *                   type: string
- *       404:
- *         description: Teacher not found
- *       500:
- *         description: Internal server error
- */
-router.get("/teachers/:userRegistration", controller.getTeacherByRegistration);
-
-/**
- * @swagger
- * /teachers/{userRegistration}:
- *   put:
- *     summary: Update a teacher by registration
- *     tags: [Teachers]
- *     parameters:
- *       - in: path
- *         name: userRegistration
- *         required: true
- *         schema:
- *           type: string
- *         description: Teacher registration number
+ *         description: Registration of the teacher to query
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - userRegistration
+ *               - userPassword
  *             properties:
+ *               userRegistration:
+ *                 type: string
+ *               userPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Teacher found
+  *      404:
+ *         description: Teacher not found
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/teachers/:userRegistration", async (req, res, next) => {
+    try {
+        await teacherController.getTeacherByRegistration(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /teachers/{userRegistration}:
+ *   put:
+ *     summary: Update a teacher by registration (Authentication required)
+ *     tags: [Teachers]
+ *     parameters:
+ *       - in: path
+ *         name: userRegistration
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Registration of the teacher to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userRegistration
+ *               - userPassword
+ *               - userName
+ *               - userEmail
+ *             properties:
+ *               userRegistration:
+ *                 type: string
+ *               userPassword:
+ *                 type: string
  *               userName:
  *                 type: string
  *               userEmail:
@@ -128,13 +166,19 @@ router.get("/teachers/:userRegistration", controller.getTeacherByRegistration);
  *       500:
  *         description: Internal server error
  */
-router.put("/teachers/:userRegistration", controller.updateTeacher);
+router.put("/teachers/:userRegistration", async (req, res, next) => {
+    try {
+        await teacherController.updateTeacher(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 /**
  * @swagger
  * /teachers/{userRegistration}:
  *   delete:
- *     summary: Delete a teacher by registration
+ *     summary: Delete a teacher by registration (Authentication required)
  *     tags: [Teachers]
  *     parameters:
  *       - in: path
@@ -142,24 +186,85 @@ router.put("/teachers/:userRegistration", controller.updateTeacher);
  *         required: true
  *         schema:
  *           type: string
- *         description: Teacher registration number
+ *         description: Registration of the teacher to delete
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userRegistration
+ *               - userPassword
+ *             properties:
+ *               userRegistration:
+ *                 type: string
+ *               userPassword:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Teacher deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 deletedTeacher:
- *                   type: object
  *       404:
  *         description: Teacher not found
  *       500:
  *         description: Internal server error
  */
-router.delete("/teachers/:userRegistration", controller.deleteTeacher);
+router.delete("/teachers/:userRegistration", async (req, res, next) => {
+    try {
+        await teacherController.deleteTeacher(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
+
+/**
+ * @swagger
+ * /teachers/login:
+ *   post:
+ *     summary: Authenticates a teacher and returns a token
+ *     tags: [Teachers]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userRegistration
+ *               - userPassword
+ *             properties:
+ *               userRegistration:
+ *                 type: string
+ *               userPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful authentication
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: number
+ *                     userRegistration:
+ *                       type: string
+ *                     userEmail:
+ *                       type: string
+ *       401:
+ *         description: Invalid credentials
+ */
+router.post("/teachers/login", async (req, res, next) => {
+    try {
+        await teacherController.loginTeacher(req, res);
+    } catch (error: any) {
+        next(error);
+    }
+});
 
 export default router;

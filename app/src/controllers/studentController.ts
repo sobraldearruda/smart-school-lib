@@ -3,71 +3,79 @@ import { StudentService } from "../services/studentService";
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class StudentController {
-  private service: StudentService;
 
-  constructor() {
-    this.service = new StudentService();
+  private StudentService: StudentService;
+
+  constructor(StudentService: StudentService) {
+    this.StudentService = StudentService;
   }
 
-  createStudent = async (req: Request, res: Response) => {
+  async createStudent(req: Request, res: Response): Promise<Response> {
     try {
-      const { userName, userEmail, userRegistration } = req.body;
-      const student = await this.service.createStudent(userName, userEmail, userRegistration);
-      res.status(201).json(student);
-    } catch (error) {
-      res.status(500).json({ message: "It is not possible to create user.", error: (error as Error).message });
+      const userData = req.body;
+      const student = await this.StudentService.createStudent(userData);
+      return res.status(201).json(student);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
     }
-  };
+  }
 
-  getAllStudents = async (_req: Request, res: Response) => {
+  async getAllStudents(req: Request, res: Response): Promise<Response> {
     try {
-      const students = await this.service.getAllStudents();
-      res.status(200).json(students);
-    } catch (error) {
-      res.status(500).json({ message: "It is not possible to query users.", error: (error as Error).message });
+      const students = await this.StudentService.getAllStudents();
+      return res.json(students);
+    } catch (error: any) {
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  getStudentByRegistration = async (req: Request, res: Response) => {
+  async getStudentByRegistration(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.params;
-      const student = await this.service.getStudentByRegistration(userRegistration);
-      res.status(200).json(student);
-    } catch (error) {
+      const { userRegistration } = req.body;
+      const student = await this.StudentService.getStudentByRegistration(userRegistration);
+      return res.json(student);
+    } catch (error: any) {
       if (error instanceof UserNotFoundException) {
-        res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "It is not possible to query user.", error: (error as Error).message });
+        return res.status(404).json({ message: error.message });
       }
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  updateStudent = async (req: Request, res: Response) => {
+  async updateStudent(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.params;
       const updatedData = req.body;
-      const student = await this.service.updateStudent(userRegistration, updatedData);
-      res.status(200).json(student);
-    } catch (error) {
+      const { userRegistration } = req.body;
+      const student = await this.StudentService.updateStudent(userRegistration, updatedData);
+      return res.json(student);
+    } catch (error: any) {
       if (error instanceof UserNotFoundException) {
-        res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "It is not possible to update user.", error: (error as Error).message });
+        return res.status(404).json({ message: error.message });
       }
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
 
-  deleteStudent = async (req: Request, res: Response) => {
+  async deleteStudent(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.params;
-      const deletedStudent = await this.service.deleteStudent(userRegistration);
-      res.status(200).json({ message: "Student deleted successfully.", deletedStudent });
-    } catch (error) {
+      const { userRegistration } = req.body;
+      const deletedStudent = await this.StudentService.deleteStudent(userRegistration);
+      return res.json({ message: "Student deleted successfully.", deletedStudent });
+    } catch (error: any) {
       if (error instanceof UserNotFoundException) {
-        res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "It is not possible to delete user.", error: (error as Error).message });
+        return res.status(404).json({ message: error.message });
       }
+      return res.status(500).json({ message: error.message });
     }
-  };
+  }
+
+  async loginStudent(req: Request, res: Response): Promise<Response> {
+    try {
+      const { userRegistration, userPassword } = req.body;
+      const authResult = await this.StudentService.authenticate(userRegistration, userPassword);
+      return res.json(authResult);
+    } catch (error: any) {
+      return res.status(401).json({ message: error.message });
+    }
+  }
 }
