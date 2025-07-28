@@ -1,5 +1,8 @@
-node_modules
+node_modules/
 .env
-docker-compose.yml
-Dockerfile
+.env.*
 .dockerignore
+dist/
+build/
+.vscode/
+.idea/
