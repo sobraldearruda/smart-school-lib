@@ -2,6 +2,7 @@ import { Book } from "./book";
 import { Author } from "./author";
 import { BookLoan } from "./bookLoan";
 import { Student } from "./student";
+import { ReadingSuggestion } from "./readingSuggestion";
 
 export function setupAssociations() {
   Book.belongsToMany(Author, {
@@ -25,5 +26,21 @@ export function setupAssociations() {
   });
   Book.hasMany(BookLoan, { 
     foreignKey: 'bookId' 
+  });
+  ReadingSuggestion.belongsTo(Student, { 
+    foreignKey: 'studentId' 
+  });
+  Student.hasMany(ReadingSuggestion, { 
+    foreignKey: 'studentId' 
+  });
+  ReadingSuggestion.belongsToMany(Book, {
+    through: 'reading_suggestions_books',
+    foreignKey: 'suggestionId',
+    otherKey: 'bookId',
+  });
+  Book.belongsToMany(ReadingSuggestion, {
+    through: 'reading_suggestions_books',
+    foreignKey: 'bookId',
+    otherKey: 'suggestionId',
   });
 }
