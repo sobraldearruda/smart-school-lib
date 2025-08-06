@@ -112,7 +112,7 @@ router.get("/teachers", async (req, res, next) => {
  *     responses:
  *       200:
  *         description: Teacher found
-  *      404:
+ *       404:
  *         description: Teacher not found
  *       500:
  *         description: Internal server error
