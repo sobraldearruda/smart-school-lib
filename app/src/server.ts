@@ -4,21 +4,15 @@ import sequelize from "./config/database";
 import * as swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
 import { InitialSeeder } from "./config/seeders/initialSeeder";
-
-import "./models/teacher";
-import "./models/student";
-import "./models/librarian";
-import "./models/book";
-import "./models/author";
 import { setupAssociations } from "./models/associations";
-
-setupAssociations();
-
 import studentRoutes from "./routes/studentRoutes";
 import teacherRoutes from "./routes/teacherRoutes";
 import librarianRoutes from "./routes/librarianRoutes";
 import bookRoutes from "./routes/bookRoutes";
 import authorRoutes from "./routes/authorRoutes";
+import bookLoanRoutes from "./routes/bookLoanRoutes";
+
+setupAssociations();
 
 dotenv.config();
 
@@ -31,6 +25,7 @@ app.use("/api", teacherRoutes);
 app.use("/api", librarianRoutes);
 app.use("/api", bookRoutes);
 app.use("/api", authorRoutes);
+app.use("/api", bookLoanRoutes)
 
 const PORT = process.env.PORT || 3000;
 
