@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { BookLoanService } from "../services/bookLoanService";
+import { IBookLoanService } from "../services/interfaces/iBookLoanService";
 
 export class BookLoanController {
-  private service: BookLoanService;
+  
+  private service: IBookLoanService;
 
-  constructor() {
-    this.service = new BookLoanService();
+  constructor(service: IBookLoanService) {
+    this.service = service;
   }
 
   createLoan = async (req: Request, res: Response) => {

@@ -1,19 +1,19 @@
 import { Request, Response } from "express";
-import { LibrarianService } from "../services/librarianService";
+import { ILibrarianService } from "../services/interfaces/iLibrarianService";
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class LibrarianController {
 
-  private LibrarianService: LibrarianService;
+  private librarianService: ILibrarianService;
 
-  constructor(LibrarianService: LibrarianService) {
-    this.LibrarianService = LibrarianService;
+  constructor(service: ILibrarianService) {
+    this.librarianService = service;
   }
 
   async createLibrarian(req: Request, res: Response): Promise<Response> {
     try {
       const userData = req.body;
-      const librarian = await this.LibrarianService.createLibrarian(userData);
+      const librarian = await this.librarianService.createLibrarian(userData);
       return res.status(201).json(librarian);
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
@@ -22,7 +22,7 @@ export class LibrarianController {
 
   async getAllLibrarians(req: Request, res: Response): Promise<Response> {
     try {
-      const librarians = await this.LibrarianService.getAllLibrarians();
+      const librarians = await this.librarianService.getAllLibrarians();
       return res.json(librarians);
     } catch (error: any) {
       return res.status(500).json({ message: error.message });
@@ -32,7 +32,7 @@ export class LibrarianController {
   async getLibrarianByRegistration(req: Request, res: Response): Promise<Response> {
     try {
       const { userRegistration } = req.body;
-      const librarian = await this.LibrarianService.getLibrarianByRegistration(userRegistration);
+      const librarian = await this.librarianService.getLibrarianByRegistration(userRegistration);
       return res.json(librarian);
     } catch (error: any) {
       if (error instanceof UserNotFoundException) {
@@ -46,7 +46,7 @@ export class LibrarianController {
     try {
       const updatedData = req.body;
       const { userRegistration } = req.body;
-      const librarian = await this.LibrarianService.updateLibrarian(userRegistration, updatedData);
+      const librarian = await this.librarianService.updateLibrarian(userRegistration, updatedData);
       return res.json(librarian);
     } catch (error: any) {
       if (error instanceof UserNotFoundException) {
@@ -59,7 +59,7 @@ export class LibrarianController {
   async deleteLibrarian(req: Request, res: Response): Promise<Response> {
     try {
       const { userRegistration } = req.body;
-      const deletedLibrarian = await this.LibrarianService.deleteLibrarian(userRegistration);
+      const deletedLibrarian = await this.librarianService.deleteLibrarian(userRegistration);
       return res.json({ message: "Librarian deleted successfully.", deletedLibrarian });
     } catch (error: any) {
       if (error instanceof UserNotFoundException) {
@@ -72,7 +72,7 @@ export class LibrarianController {
   async loginLibrarian(req: Request, res: Response): Promise<Response> {
     try {
       const { userRegistration, userPassword } = req.body;
-      const authResult = await this.LibrarianService.authenticate(userRegistration, userPassword);
+      const authResult = await this.librarianService.authenticate(userRegistration, userPassword);
       return res.json(authResult);
     } catch (error: any) {
       return res.status(401).json({ message: error.message });

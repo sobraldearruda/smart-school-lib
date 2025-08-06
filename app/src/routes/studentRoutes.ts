@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { StudentController } from "../controllers/studentController";
-import { StudentService } from "../services/studentService";
+import { StudentService } from "../services/implementations/studentService";
 
 const studentService = new StudentService();
 const studentController = new StudentController(studentService);

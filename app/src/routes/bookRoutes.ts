@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { BookController } from "../controllers/bookController";
+import { BookService } from "../services/implementations/bookService";
 
 const router = Router();
-const controller = new BookController();
+
+const service = new BookService();
+const controller = new BookController(service);
 
 /**
  * @swagger

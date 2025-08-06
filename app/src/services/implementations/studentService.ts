@@ -1,11 +1,12 @@
-import { StudentRepository } from "../repositories/studentRepository";
-import { Student } from "../models/student";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
-import { DuplicateRegistrationException } from "../exceptions/duplicateRegistrationException";
+import { StudentRepository } from "../../repositories/studentRepository";
+import { Student } from "../../models/student";
+import { UserNotFoundException } from "../../exceptions/userNotFoundException";
+import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
+import { IStudentService } from "../interfaces/iStudentService";
 
-export class StudentService {
+export class StudentService implements IStudentService {
 
   private repository = new StudentRepository();
   private jwtSecret: jwt.Secret = (process.env.JWT_SECRET || "defaultSecret") as jwt.Secret;

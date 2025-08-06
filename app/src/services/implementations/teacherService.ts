@@ -1,11 +1,12 @@
-import { TeacherRepository } from "../repositories/teacherRepository";
-import { Teacher } from "../models/teacher";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
-import { DuplicateRegistrationException } from "../exceptions/duplicateRegistrationException";
+import { TeacherRepository } from "../../repositories/teacherRepository";
+import { Teacher } from "../../models/teacher";
+import { UserNotFoundException } from "../../exceptions/userNotFoundException";
+import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
+import { ITeacherService } from "../interfaces/iTeacherService";
 
-export class TeacherService {
+export class TeacherService implements ITeacherService {
 
   private repository = new TeacherRepository();
   private jwtSecret: jwt.Secret = (process.env.JWT_SECRET || "defaultSecret") as jwt.Secret;

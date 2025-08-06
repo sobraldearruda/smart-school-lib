@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { AuthorController } from "../controllers/authorController";
+import { AuthorService } from "../services/implementations/authorService"; 
 
 const router = Router();
-const controller = new AuthorController();
+const authorService = new AuthorService();
+const controller = new AuthorController(authorService);
 
 /**
  * @swagger

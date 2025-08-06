@@ -1,7 +1,8 @@
-import { ReadingSuggestionRepository } from '../repositories/readingSuggestionRepository';
-import { ReadingSuggestion } from '../models/readingSuggestion';
+import { ReadingSuggestionRepository } from '../../repositories/readingSuggestionRepository';
+import { ReadingSuggestion } from '../../models/readingSuggestion';
+import { IReadingSuggestionService } from '../interfaces/iReadingSuggestionService';
 
-export class ReadingSuggestionService {
+export class ReadingSuggestionService implements IReadingSuggestionService {
   private repository = new ReadingSuggestionRepository();
 
   async createSuggestion(studentId: number, bookIds: number[]): Promise<ReadingSuggestion> {

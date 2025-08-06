@@ -1,9 +1,10 @@
-import { AuthorRepository } from "../repositories/authorRepository";
-import { Author } from "../models/author";
-import { AuthorNotFoundException } from "../exceptions/authorNotFoundException";
-import { DuplicateRegistrationException } from "../exceptions/duplicateRegistrationException";
+import { AuthorRepository } from "../../repositories/authorRepository";
+import { Author } from "../../models/author";
+import { AuthorNotFoundException } from "../../exceptions/authorNotFoundException";
+import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
+import { IAuthorService } from "../interfaces/iAuthorService";
 
-export class AuthorService {
+export class AuthorService implements IAuthorService {
   private repository: AuthorRepository;
 
   constructor() {

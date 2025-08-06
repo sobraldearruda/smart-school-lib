@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { ReadingSuggestionService } from "../services/readingSuggestionService";
+import { IReadingSuggestionService } from "../services/interfaces/iReadingSuggestionService";
 
 export class ReadingSuggestionController {
-  private service: ReadingSuggestionService;
 
-  constructor() {
-    this.service = new ReadingSuggestionService();
+  private service: IReadingSuggestionService;
+
+  constructor(service: IReadingSuggestionService) {
+    this.service = service;
   }
 
   createSuggestion = async (req: Request, res: Response) => {

@@ -1,10 +1,11 @@
-import { BookRepository } from "../repositories/bookRepository";
-import { Book } from "../models/book";
-import { Author } from "../models/author";
-import { BookNotFoundException } from "../exceptions/bookNotFoundException";
-import { DuplicateRegistrationException } from "../exceptions/duplicateRegistrationException";
+import { BookRepository } from "../../repositories/bookRepository";
+import { Book } from "../../models/book";
+import { Author } from "../../models/author";
+import { BookNotFoundException } from "../../exceptions/bookNotFoundException";
+import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
+import { IBookService } from "../interfaces/iBookService";
 
-export class BookService {
+export class BookService implements IBookService {
   private repository: BookRepository;
 
   constructor() {
