@@ -8,13 +8,13 @@ export async function BookAuthorSeeder() {
     Author.findOne({ where: { authorName: "Clarice Lispector" } }),
     Author.findOne({ where: { authorName: "Conceição Evaristo" } }),
   ]);
-  const [hp1, hobbit, got] = await Promise.all([
+  const [memorias, casos, olhos] = await Promise.all([
     Book.findOne({ where: { bookTitle: "Memórias Póstumas de Brás Cubas" } }),
     Book.findOne({ where: { bookTitle: "Casos de Família" } }),
     Book.findOne({ where: { bookTitle: "Olhos D'água" } }),
   ]);
-  if (assis && hp1) await hp1.addAuthor(assis);
-  if (lispector && hobbit) await hobbit.addAuthor(lispector);
-  if (evaristo && got) await got.addAuthor(evaristo);
+  if (assis && memorias) await memorias.addAuthor(assis);
+  if (lispector && casos) await casos.addAuthor(lispector);
+  if (evaristo && olhos) await olhos.addAuthor(evaristo);
   console.log("Book-Author relationships seeded.");
 }
