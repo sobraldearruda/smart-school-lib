@@ -1,7 +1,8 @@
-import { BookLoanRepository } from '../repositories/bookLoanRepository';
-import { BookLoan } from '../models/bookLoan';
+import { BookLoanRepository } from '../../repositories/bookLoanRepository';
+import { BookLoan } from '../../models/bookLoan';
+import { IBookLoanService } from '../interfaces/iBookLoanService';
 
-export class BookLoanService {
+export class BookLoanService implements IBookLoanService {
     
   private repository = new BookLoanRepository();
 

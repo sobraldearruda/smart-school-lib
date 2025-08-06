@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { LibrarianController } from "../controllers/librarianController";
-import { LibrarianService } from "../services/librarianService";
+import { LibrarianService } from "../services/implementations/librarianService";
 
 const librarianService = new LibrarianService();
 const librarianController = new LibrarianController(librarianService);

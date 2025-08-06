@@ -1,11 +1,12 @@
-import { LibrarianRepository } from "../repositories/librarianRepository";
-import { Librarian } from "../models/librarian";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
-import { DuplicateRegistrationException } from "../exceptions/duplicateRegistrationException";
+import { LibrarianRepository } from "../../repositories/librarianRepository";
+import { Librarian } from "../../models/librarian";
+import { UserNotFoundException } from "../../exceptions/userNotFoundException";
+import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
+import { ILibrarianService } from "../interfaces/iLibrarianService";
 
-export class LibrarianService {
+export class LibrarianService implements ILibrarianService {
 
   private repository = new LibrarianRepository();
   private jwtSecret: jwt.Secret = (process.env.JWT_SECRET || "defaultSecret") as jwt.Secret;

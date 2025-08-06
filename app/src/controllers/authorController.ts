@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import { AuthorService } from "../services/authorService";
+import { IAuthorService } from "../services/interfaces/iAuthorService";
 import { AuthorNotFoundException } from "../exceptions/authorNotFoundException";
 
 export class AuthorController {
-  private service: AuthorService;
+  
+  private service: IAuthorService;
 
-  constructor() {
-    this.service = new AuthorService();
+  constructor(service: IAuthorService) {
+    this.service = service;
   }
 
   createAuthor = async (req: Request, res: Response) => {

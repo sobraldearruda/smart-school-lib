@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { BookLoanController } from "../controllers/bookLoanController";
+import { BookLoanService } from "../services/implementations/bookLoanService";
 
 const router = Router();
-const bookLoanController = new BookLoanController();
+
+const bookLoanService = new BookLoanService();
+const bookLoanController = new BookLoanController(bookLoanService);
 
 router.post("/book-loans", bookLoanController.createLoan);
 

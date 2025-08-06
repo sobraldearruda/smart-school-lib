@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { TeacherService } from "../services/teacherService";
+import { ITeacherService } from "../services/interfaces/iTeacherService";
 import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class TeacherController {
 
-  private teacherService: TeacherService;
+  private teacherService: ITeacherService;
 
-  constructor(teacherService: TeacherService) {
-    this.teacherService = teacherService;
+  constructor(service: ITeacherService) {
+    this.teacherService = service;
   }
 
   async createTeacher(req: Request, res: Response): Promise<Response> {

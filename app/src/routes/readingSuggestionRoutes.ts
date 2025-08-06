@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { ReadingSuggestionController } from "../controllers/readingSuggestionController";
+import { ReadingSuggestionService } from "../services/implementations/readingSuggestionService";
 
 const router = Router();
-const readingSuggestionController = new ReadingSuggestionController();
+
+const readingSuggestionService = new ReadingSuggestionService();
+const readingSuggestionController = new ReadingSuggestionController(readingSuggestionService);
 
 router.post("/reading-suggestions", readingSuggestionController.createSuggestion);
 router.get("/reading-suggestions", readingSuggestionController.getAllSuggestions);

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-import { BookService } from "../services/bookService";
+import { IBookService } from "../services/interfaces/iBookService";
 import { BookNotFoundException } from "../exceptions/bookNotFoundException";
 
 export class BookController {
-  private service: BookService;
+  
+  private service: IBookService;
 
-  constructor() {
-    this.service = new BookService();
+  constructor(service: IBookService) {
+    this.service = service;
   }
 
   createBook = async (req: Request, res: Response) => {
