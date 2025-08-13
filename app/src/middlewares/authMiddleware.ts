@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
+import { Teacher } from "../models/teacher";
+import { Librarian } from "../models/librarian";
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -29,4 +31,34 @@ export function authenticateJWT(req: AuthRequest, res: Response, next: NextFunct
     res.status(403).json({ message: "Expired or invalid token." });
     return;
   }
+}
+
+export function authorizeTeacher(req: AuthRequest, res: Response, next: NextFunction): void {
+  if (!req.user) {
+    res.status(401).json({ message: "Unauthorized." });
+    return;
+  }
+
+  const userInstance = Object.setPrototypeOf(req.user, Teacher.prototype);
+  if (!(userInstance instanceof Teacher)) {
+    res.status(403).json({ message: "Access denied. Teacher role required." });
+    return;
+  }
+
+  next();
+}
+
+export function authorizeLibrarian(req: AuthRequest, res: Response, next: NextFunction): void {
+  if (!req.user) {
+    res.status(401).json({ message: "Unauthorized." });
+    return;
+  }
+
+  const userInstance = Object.setPrototypeOf(req.user, Librarian.prototype);
+  if (!(userInstance instanceof Librarian)) {
+    res.status(403).json({ message: "Access denied. Librarian role required." });
+    return;
+  }
+
+  next();
 }

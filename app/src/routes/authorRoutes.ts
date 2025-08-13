@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AuthorController } from "../controllers/authorController";
 import { AuthorService } from "../services/implementations/authorService"; 
+import { authenticateJWT, authorizeLibrarian } from "../middlewares/authMiddleware";
 
 const router = Router();
 const authorService = new AuthorService();
@@ -32,7 +33,7 @@ const controller = new AuthorController(authorService);
  *       500:
  *         description: Internal server error
  */
-router.post("/authors", controller.createAuthor);
+router.post("/authors", authenticateJWT, authorizeLibrarian, controller.createAuthor);
 
 /**
  * @swagger
@@ -121,7 +122,7 @@ router.get("/authors/:authorName", controller.getAuthorByName);
  *       500:
  *         description: Internal server error
  */
-router.put("/authors/:authorName", controller.updateAuthor);
+router.put("/authors/:authorName", authenticateJWT, authorizeLibrarian, controller.updateAuthor);
 
 /**
  * @swagger
@@ -153,6 +154,6 @@ router.put("/authors/:authorName", controller.updateAuthor);
  *       500:
  *         description: Internal server error
  */
-router.delete("/authors/:authorName", controller.deleteAuthor);
+router.delete("/authors/:authorName", authenticateJWT, authorizeLibrarian, controller.deleteAuthor);
 
 export default router;

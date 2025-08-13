@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { StudentController } from "../controllers/studentController";
 import { StudentService } from "../services/implementations/studentService";
+import { authenticateJWT, authorizeLibrarian } from "../middlewares/authMiddleware";
 
 const studentService = new StudentService();
 const studentController = new StudentController(studentService);
@@ -74,7 +75,7 @@ router.post("/students", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/students", async (req, res, next) => {
+router.get("/students", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await studentController.getAllStudents(req, res);
     } catch (error: any) {
@@ -114,7 +115,7 @@ router.get("/students", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/students/:userRegistration", async (req, res, next) => {
+router.get("/students/:userRegistration", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await studentController.getStudentByRegistration(req, res);
     } catch (error: any) {
@@ -160,7 +161,7 @@ router.get("/students/:userRegistration", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.put("/students/:userRegistration", async (req, res, next) => {
+router.put("/students/:userRegistration", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await studentController.updateStudent(req, res);
     } catch (error: any) {
@@ -209,7 +210,7 @@ router.put("/students/:userRegistration", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.delete("/students/:userRegistration", async (req, res, next) => {
+router.delete("/students/:userRegistration", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await studentController.deleteStudent(req, res);
     } catch (error: any) {

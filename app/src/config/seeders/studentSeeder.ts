@@ -1,18 +1,26 @@
+import bcrypt from "bcryptjs";
 import { Student } from "../../models/student";
+
+async function hashPassword(password: string) {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+}
 
 export async function StudentSeeder() {
   console.log("Seeding Students...");
   await Student.destroy({ where: {} });
   await Student.bulkCreate([
-    { userName: "Alice Silva", 
+    { 
+      userName: "Alice Silva", 
       userEmail: "alice.silva@email.com", 
-      userRegistration: "12345",
-      userPassword: "54321"
+      userRegistration: "STD12345",
+      userPassword: await hashPassword("54321")
     },
-    { userName: "Carlos Daniel", 
+    { 
+      userName: "Carlos Daniel", 
       userEmail: "carlos.daniel@email.com", 
-      userRegistration: "67890", 
-      userPassword: "09876"
+      userRegistration: "STD67890", 
+      userPassword: await hashPassword("09876")
     },
   ]);
   console.log("Students seeded.");

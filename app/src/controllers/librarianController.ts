@@ -31,7 +31,7 @@ export class LibrarianController {
 
   async getLibrarianByRegistration(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.body;
+      const { userRegistration } = req.params;
       const librarian = await this.librarianService.getLibrarianByRegistration(userRegistration);
       return res.json(librarian);
     } catch (error: any) {
@@ -45,7 +45,7 @@ export class LibrarianController {
   async updateLibrarian(req: Request, res: Response): Promise<Response> {
     try {
       const updatedData = req.body;
-      const { userRegistration } = req.body;
+      const { userRegistration } = req.params;
       const librarian = await this.librarianService.updateLibrarian(userRegistration, updatedData);
       return res.json(librarian);
     } catch (error: any) {
@@ -58,7 +58,7 @@ export class LibrarianController {
 
   async deleteLibrarian(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.body;
+      const { userRegistration } = req.params;
       const deletedLibrarian = await this.librarianService.deleteLibrarian(userRegistration);
       return res.json({ message: "Librarian deleted successfully.", deletedLibrarian });
     } catch (error: any) {
@@ -71,7 +71,7 @@ export class LibrarianController {
 
   async loginLibrarian(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration, userPassword } = req.body;
+      const { userRegistration, userPassword } = req.params;
       const authResult = await this.librarianService.authenticate(userRegistration, userPassword);
       return res.json(authResult);
     } catch (error: any) {

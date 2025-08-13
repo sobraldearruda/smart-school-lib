@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { LibrarianController } from "../controllers/librarianController";
 import { LibrarianService } from "../services/implementations/librarianService";
+import { authenticateJWT, authorizeLibrarian } from "../middlewares/authMiddleware";
 
 const librarianService = new LibrarianService();
 const librarianController = new LibrarianController(librarianService);
@@ -74,7 +75,7 @@ router.post("/librarians", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/librarians", async (req, res, next) => {
+router.get("/librarians", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await librarianController.getAllLibrarians(req, res);
     } catch (error: any) {
@@ -114,7 +115,7 @@ router.get("/librarians", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/librarians/:userRegistration", async (req, res, next) => {
+router.get("/librarians/:userRegistration", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await librarianController.getLibrarianByRegistration(req, res);
     } catch (error: any) {
@@ -160,7 +161,7 @@ router.get("/librarians/:userRegistration", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.put("/librarians/:userRegistration", async (req, res, next) => {
+router.put("/librarians/:userRegistration", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await librarianController.updateLibrarian(req, res);
     } catch (error: any) {
@@ -209,7 +210,7 @@ router.put("/librarians/:userRegistration", async (req, res, next) => {
  *       500:
  *         description: Internal server error
  */
-router.delete("/librarians/:userRegistration", async (req, res, next) => {
+router.delete("/librarians/:userRegistration", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await librarianController.deleteLibrarian(req, res);
     } catch (error: any) {
