@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { BookController } from "../controllers/bookController";
 import { BookService } from "../services/implementations/bookService";
+import { authenticateJWT, authorizeLibrarian } from "../middlewares/authMiddleware";
 
 const router = Router();
 
@@ -36,7 +37,7 @@ const controller = new BookController(service);
  *       500:
  *         description: Internal server error
  */
-router.post("/books", controller.createBook);
+router.post("/books", authenticateJWT, authorizeLibrarian, controller.createBook);
 
 /**
  * @swagger
@@ -131,7 +132,7 @@ router.get("/books/:bookTitle", controller.getBookByTitle);
  *       500:
  *         description: Internal server error
  */
-router.put("/books/:bookTitle", controller.updateBook);
+router.put("/books/:bookTitle", authenticateJWT, authorizeLibrarian, controller.updateBook);
 
 /**
  * @swagger
@@ -163,6 +164,6 @@ router.put("/books/:bookTitle", controller.updateBook);
  *       500:
  *         description: Internal server error
  */
-router.delete("/books/:bookTitle", controller.deleteBook);
+router.delete("/books/:bookTitle", authenticateJWT, authorizeLibrarian, controller.deleteBook);
 
 export default router;

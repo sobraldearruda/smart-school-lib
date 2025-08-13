@@ -1,8 +1,20 @@
+import jwt from "jsonwebtoken";
 import { Book } from "../../models/book";
+import { Librarian } from "../../models/librarian";
+
+function generateToken(user: any) {
+  const secret = process.env.JWT_SECRET || "defaultSecret";
+  return jwt.sign({ ...user }, secret, { expiresIn: "1h" });
+}
 
 export async function BookSeeder() {
   console.log("Seeding Books...");
   await Book.destroy({ where: {} });
+  const librarian = await Librarian.findOne({ where: { userRegistration: "LIB12345" } });
+  if (!librarian) {
+    console.error("Not found.");
+    return;
+  }
   await Book.bulkCreate([
     {
       bookTitle: "Memórias Póstumas de Brás Cubas",
@@ -20,5 +32,6 @@ export async function BookSeeder() {
       bookPublicationYear: "2014",
     },
   ]);
+  console.log(`JWT Librarian (${librarian.userName}):`, generateToken(librarian.toJSON()));
   console.log("Books seeded.");
 }

@@ -1,19 +1,36 @@
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { Librarian } from "../../models/librarian";
+
+async function hashPassword(password: string) {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+}
+
+function generateToken(user: any) {
+  const secret = process.env.JWT_SECRET || "defaultSecret";
+  return jwt.sign({ ...user }, secret, { expiresIn: "1h" });
+}
 
 export async function LibrarianSeeder() {
   console.log("Seeding Librarians...");
   await Librarian.destroy({ where: {} });
-  await Librarian.bulkCreate([
-    { userName: "Ana Maria", 
+  const librarians = await Librarian.bulkCreate([
+    { 
+      userName: "Ana Maria", 
       userEmail: "ana.maria@email.com", 
-      userRegistration: "12345",
-      userPassword: "54321"
+      userRegistration: "LIB12345",
+      userPassword: await hashPassword("54321")
     },
-    { userName: "José Carlos", 
+    { 
+      userName: "José Carlos", 
       userEmail: "jose.carlos@email.com", 
-      userRegistration: "67890",
-      userPassword: "09876"
+      userRegistration: "LIB67890",
+      userPassword: await hashPassword("09876")
     },
-  ]);
+  ], { returning: true });
+  librarians.forEach(l => {
+    console.log(`JWT Librarian (${l.userName}):`, generateToken(l.toJSON()));
+  });
   console.log("Librarians seeded.");
 }

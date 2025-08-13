@@ -31,7 +31,7 @@ export class TeacherController {
 
   async getTeacherByRegistration(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.body;
+      const { userRegistration } = req.params;
       const teacher = await this.teacherService.getTeacherByRegistration(userRegistration);
       return res.json(teacher);
     } catch (error: any) {
@@ -45,7 +45,7 @@ export class TeacherController {
   async updateTeacher(req: Request, res: Response): Promise<Response> {
     try {
       const updatedData = req.body;
-      const { userRegistration } = req.body;
+      const { userRegistration } = req.params;
       const teacher = await this.teacherService.updateTeacher(userRegistration, updatedData);
       return res.json(teacher);
     } catch (error: any) {
@@ -58,7 +58,7 @@ export class TeacherController {
 
   async deleteTeacher(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration } = req.body;
+      const { userRegistration } = req.params;
       const deletedTeacher = await this.teacherService.deleteTeacher(userRegistration);
       return res.json({ message: "Teacher deleted successfully.", deletedTeacher });
     } catch (error: any) {
@@ -71,7 +71,7 @@ export class TeacherController {
 
   async loginTeacher(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration, userPassword } = req.body;
+      const { userRegistration, userPassword } = req.params;
       const authResult = await this.teacherService.authenticate(userRegistration, userPassword);
       return res.json(authResult);
     } catch (error: any) {
