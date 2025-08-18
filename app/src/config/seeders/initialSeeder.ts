@@ -8,7 +8,6 @@ import { BookLoanSeeder } from "./bookLoanSeeder";
 import { ReadingSuggestionSeeder } from "./readingSuggestionSeeder";
 
 export async function InitialSeeder() {
-  console.log("Seeding entire database...");
   await AuthorSeeder();
   await BookSeeder();
   await BookAuthorSeeder();

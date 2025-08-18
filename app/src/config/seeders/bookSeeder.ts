@@ -8,7 +8,6 @@ function generateToken(user: any) {
 }
 
 export async function BookSeeder() {
-  console.log("Seeding Books...");
   await Book.destroy({ where: {} });
   const librarian = await Librarian.findOne({ where: { userRegistration: "LIB12345" } });
   if (!librarian) {

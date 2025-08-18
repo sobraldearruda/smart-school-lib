@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { IAuthorService } from "../services/interfaces/iAuthorService";
-import { AuthorNotFoundException } from "../exceptions/authorNotFoundException";
 
 export class AuthorController {
   
@@ -35,8 +34,8 @@ export class AuthorController {
       const author = await this.service.getAuthorByName(authorName);
       res.status(200).json(author);
     } catch (error) {
-      if (error instanceof AuthorNotFoundException) {
-        res.status(404).json({ message: error.message });
+      if (error instanceof Error && error.message === "Author not found") {
+        return res.status(404).json({ message: error.message });
       } else {
         res.status(500).json({ message: "It is not possible to query author.", error: (error as Error).message });
       }
@@ -50,8 +49,8 @@ export class AuthorController {
       const author = await this.service.updateAuthor(authorName, updatedData);
       res.status(200).json(author);
     } catch (error) {
-      if (error instanceof AuthorNotFoundException) {
-        res.status(404).json({ message: error.message });
+      if (error instanceof Error && error.message === "Author not found") {
+        return res.status(404).json({ message: error.message });
       } else {
         res.status(500).json({ message: "It is not possible to update author.", error: (error as Error).message });
       }
@@ -64,8 +63,8 @@ export class AuthorController {
       const deletedAuthor = await this.service.deleteAuthor(authorName);
       res.status(200).json({ message: "Author deleted successfully.", deletedAuthor });
     } catch (error) {
-      if (error instanceof AuthorNotFoundException) {
-        res.status(404).json({ message: error.message });
+      if (error instanceof Error && error.message === "Author not found") {
+        return res.status(404).json({ message: error.message });
       } else {
         res.status(500).json({ message: "It is not possible to delete author.", error: (error as Error).message });
       }

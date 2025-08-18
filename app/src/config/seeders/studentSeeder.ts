@@ -7,7 +7,6 @@ async function hashPassword(password: string) {
 }
 
 export async function StudentSeeder() {
-  console.log("Seeding Students...");
   await Student.destroy({ where: {} });
   await Student.bulkCreate([
     { 

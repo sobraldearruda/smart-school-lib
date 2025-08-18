@@ -1,5 +1,4 @@
 import { Author } from "../models/author";
-import { AuthorNotFoundException } from "../exceptions/authorNotFoundException";
 
 export class AuthorRepository {
 
@@ -18,7 +17,7 @@ export class AuthorRepository {
   async getAuthorByName(authorName: string) {
     const author = await Author.findOne({ where: { authorName } });
     if (!author) {
-      throw new AuthorNotFoundException(`Author with name ${authorName} not found.`);
+      throw new Error(`Author with name ${authorName} not found.`);
     }
     return author;
   }
@@ -26,7 +25,7 @@ export class AuthorRepository {
   async updateAuthor(authorName: string, updatedData: Partial<Omit<Author, "authorId">>) {
     const author = await Author.findOne({ where: { authorName } });
     if (!author) {
-      throw new AuthorNotFoundException(`Author with name ${authorName} not found.`);
+      throw new Error(`Author with name ${authorName} not found.`);
     }
     return await author.update(updatedData);
   }
@@ -34,7 +33,7 @@ export class AuthorRepository {
   async deleteAuthor(authorName: string) {
     const author = await Author.findOne({ where: { authorName } });
     if (!author) {
-      throw new AuthorNotFoundException(`Author with name ${authorName} not found.`);
+      throw new Error(`Author with name ${authorName} not found.`);
     }
     await author.destroy();
     return author;

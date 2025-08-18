@@ -1,5 +1,4 @@
 import { Librarian } from "../models/librarian";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class LibrarianRepository {
 
@@ -18,7 +17,7 @@ export class LibrarianRepository {
   async updateLibrarian(userRegistration: string, updatedData: Partial<Omit<Librarian, "userId">>): Promise<Librarian> {
     const librarian = await Librarian.findOne({ where: { userRegistration } });
     if (!librarian) {
-      throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
+      throw new Error(`Librarian with registration ${userRegistration} not found.`);
     }
     return await librarian.update(updatedData);
   }

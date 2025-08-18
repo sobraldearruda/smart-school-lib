@@ -1,5 +1,4 @@
 import { Teacher } from "../models/teacher";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class TeacherRepository {
 
@@ -18,7 +17,7 @@ export class TeacherRepository {
   async updateTeacher(userRegistration: string, updatedData: Partial<Omit<Teacher, "userId">>): Promise<Teacher> {
     const teacher = await Teacher.findOne({ where: { userRegistration } });
     if (!teacher) {
-      throw new UserNotFoundException(`Teacher with registration ${userRegistration} not found.`);
+      throw new Error(`Teacher with registration ${userRegistration} not found.`);
     }
     return await teacher.update(updatedData);
   }

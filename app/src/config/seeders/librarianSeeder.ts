@@ -13,7 +13,6 @@ function generateToken(user: any) {
 }
 
 export async function LibrarianSeeder() {
-  console.log("Seeding Librarians...");
   await Librarian.destroy({ where: {} });
   const librarians = await Librarian.bulkCreate([
     { 

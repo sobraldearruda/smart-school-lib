@@ -13,7 +13,6 @@ function generateToken(user: any) {
 }
 
 export async function TeacherSeeder() {
-  console.log("Seeding Teachers...");
   await Teacher.destroy({ where: {} });
   const teachers = await Teacher.bulkCreate([
     { 

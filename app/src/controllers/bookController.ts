@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { IBookService } from "../services/interfaces/iBookService";
-import { BookNotFoundException } from "../exceptions/bookNotFoundException";
 
 export class BookController {
   
@@ -35,8 +34,8 @@ export class BookController {
       const book = await this.service.getBookByTitle(bookTitle);
       res.status(200).json(book);
     } catch (error) {
-      if (error instanceof BookNotFoundException) {
-        res.status(404).json({ message: error.message });
+      if (error instanceof Error && error.message === "Book not found") {
+        return res.status(404).json({ message: error.message });
       } else {
         res.status(500).json({ message: "It is not possible to query book.", error: (error as Error).message });
       }
@@ -50,8 +49,8 @@ export class BookController {
       const book = await this.service.updateBook(bookTitle, updatedData);
       res.status(200).json(book);
     } catch (error) {
-      if (error instanceof BookNotFoundException) {
-        res.status(404).json({ message: error.message });
+      if (error instanceof Error && error.message === "Book not found") {
+        return res.status(404).json({ message: error.message });
       } else {
         res.status(500).json({ message: "It is not possible to update book.", error: (error as Error).message });
       }
@@ -64,8 +63,8 @@ export class BookController {
       const deletedBook = await this.service.deleteBook(bookTitle);
       res.status(200).json({ message: "Book deleted successfully.", deletedBook });
     } catch (error) {
-      if (error instanceof BookNotFoundException) {
-        res.status(404).json({ message: error.message });
+      if (error instanceof Error && error.message === "Book not found") {
+        return res.status(404).json({ message: error.message });
       } else {
         res.status(500).json({ message: "It is not possible to delete book.", error: (error as Error).message });
       }

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { IStudentService } from "../services/interfaces/iStudentService";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class StudentController {
 
@@ -23,7 +22,7 @@ export class StudentController {
   async getAllStudents(req: Request, res: Response): Promise<Response> {
     try {
       const students = await this.studentService.getAllStudents();
-      return res.json(students);
+      return res.status(200).json(students);
     } catch (error: any) {
       return res.status(500).json({ message: error.message });
     }
@@ -33,9 +32,9 @@ export class StudentController {
     try {
       const { userRegistration } = req.params;
       const student = await this.studentService.getStudentByRegistration(userRegistration);
-      return res.json(student);
+      return res.status(200).json(student);
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -47,9 +46,9 @@ export class StudentController {
       const updatedData = req.body;
       const { userRegistration } = req.params;
       const student = await this.studentService.updateStudent(userRegistration, updatedData);
-      return res.json(student);
+      return res.status(200).json(student);
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -60,9 +59,9 @@ export class StudentController {
     try {
       const { userRegistration } = req.params;
       const deletedStudent = await this.studentService.deleteStudent(userRegistration);
-      return res.json({ message: "Student deleted successfully.", deletedStudent });
+      return res.status(204).json({ message: "Student deleted successfully.", deletedStudent });
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -73,7 +72,7 @@ export class StudentController {
     try {
       const { userRegistration, userPassword } = req.params;
       const authResult = await this.studentService.authenticate(userRegistration, userPassword);
-      return res.json(authResult);
+      return res.status(200).json(authResult);
     } catch (error: any) {
       return res.status(401).json({ message: error.message });
     }

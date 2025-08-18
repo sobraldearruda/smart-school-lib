@@ -1,6 +1,5 @@
 import { AuthorRepository } from "../../repositories/authorRepository";
 import { Author } from "../../models/author";
-import { AuthorNotFoundException } from "../../exceptions/authorNotFoundException";
 import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
 import { IAuthorService } from "../interfaces/iAuthorService";
 
@@ -18,9 +17,7 @@ export class AuthorService implements IAuthorService {
         throw new DuplicateRegistrationException(`Registration with ${authorName} already in use.`);
       }
     } catch (error) {
-      if (!(error instanceof AuthorNotFoundException)) {
-        throw error;
-      }
+      throw new Error(`It is not possible to create author.`);
     }
     if (!authorName) {
       throw new Error("Author name required.");

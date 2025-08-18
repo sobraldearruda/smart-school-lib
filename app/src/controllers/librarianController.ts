@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { ILibrarianService } from "../services/interfaces/iLibrarianService";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class LibrarianController {
 
@@ -35,7 +34,7 @@ export class LibrarianController {
       const librarian = await this.librarianService.getLibrarianByRegistration(userRegistration);
       return res.json(librarian);
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -49,7 +48,7 @@ export class LibrarianController {
       const librarian = await this.librarianService.updateLibrarian(userRegistration, updatedData);
       return res.json(librarian);
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -62,7 +61,7 @@ export class LibrarianController {
       const deletedLibrarian = await this.librarianService.deleteLibrarian(userRegistration);
       return res.json({ message: "Librarian deleted successfully.", deletedLibrarian });
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });

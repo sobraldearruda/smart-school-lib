@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { ITeacherService } from "../services/interfaces/iTeacherService";
-import { UserNotFoundException } from "../exceptions/userNotFoundException";
 
 export class TeacherController {
 
@@ -23,7 +22,7 @@ export class TeacherController {
   async getAllTeachers(req: Request, res: Response): Promise<Response> {
     try {
       const teachers = await this.teacherService.getAllTeachers();
-      return res.json(teachers);
+      return res.status(200).json(teachers);
     } catch (error: any) {
       return res.status(500).json({ message: error.message });
     }
@@ -33,9 +32,9 @@ export class TeacherController {
     try {
       const { userRegistration } = req.params;
       const teacher = await this.teacherService.getTeacherByRegistration(userRegistration);
-      return res.json(teacher);
+      return res.status(200).json(teacher);
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -47,9 +46,9 @@ export class TeacherController {
       const updatedData = req.body;
       const { userRegistration } = req.params;
       const teacher = await this.teacherService.updateTeacher(userRegistration, updatedData);
-      return res.json(teacher);
+      return res.status(200).json(teacher);
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -60,9 +59,9 @@ export class TeacherController {
     try {
       const { userRegistration } = req.params;
       const deletedTeacher = await this.teacherService.deleteTeacher(userRegistration);
-      return res.json({ message: "Teacher deleted successfully.", deletedTeacher });
+      return res.status(204).json({ message: "Teacher deleted successfully.", deletedTeacher });
     } catch (error: any) {
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof Error && error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -73,7 +72,7 @@ export class TeacherController {
     try {
       const { userRegistration, userPassword } = req.params;
       const authResult = await this.teacherService.authenticate(userRegistration, userPassword);
-      return res.json(authResult);
+      return res.status(200).json(authResult);
     } catch (error: any) {
       return res.status(401).json({ message: error.message });
     }

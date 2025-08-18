@@ -9,7 +9,6 @@ function generateToken(user: any) {
 }
 
 export async function ReadingSuggestionSeeder() {
-  console.log("Seeding Reading Suggestions...");
   await ReadingSuggestion.destroy({ where: {} });
   const teacher = await Teacher.findOne({ where: { userRegistration: "TCH12345" } });
   const books = await Book.findAll({

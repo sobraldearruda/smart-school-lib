@@ -1,6 +1,5 @@
 import { StudentRepository } from "../../repositories/studentRepository";
 import { Student } from "../../models/student";
-import { UserNotFoundException } from "../../exceptions/userNotFoundException";
 import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
@@ -32,13 +31,13 @@ export class StudentService implements IStudentService {
 
   async getStudentByRegistration(userRegistration: string): Promise<Student> {
     const student = await this.repository.getStudentByRegistration(userRegistration);
-    if (!student) throw new UserNotFoundException(`Student with registration ${userRegistration} not found.`);
+    if (!student) throw new Error(`Student with registration ${userRegistration} not found.`);
     return student;
   }
 
   async updateStudent(userRegistration: string, updatedData: Partial<Omit<Student, "userId">>): Promise<Student> {
     const existing = await this.repository.getStudentByRegistration(userRegistration);
-    if (!existing) throw new UserNotFoundException(`Student with registration ${userRegistration} not found.`);
+    if (!existing) throw new Error(`Student with registration ${userRegistration} not found.`);
     if (updatedData.userPassword) {
       updatedData.userPassword = await bcrypt.hash(updatedData.userPassword, 10);
     }
@@ -52,13 +51,13 @@ export class StudentService implements IStudentService {
 
   async deleteStudent(userRegistration: string): Promise<Student | string> {
     const existing = await this.repository.getStudentByRegistration(userRegistration);
-    if (!existing) throw new UserNotFoundException(`Student with registration ${userRegistration} not found.`);
+    if (!existing) throw new Error(`Student with registration ${userRegistration} not found.`);
     return await this.repository.deleteStudent(userRegistration);
   }
 
   async authenticate(userRegistration: string, userPassword: string) {
     const user = await this.repository.getStudentByRegistration(userRegistration);
-    if (!user) throw new UserNotFoundException(`Student with registration ${userRegistration} not found.`);
+    if (!user) throw new Error(`Student with registration ${userRegistration} not found.`);
     const passwordOk = await bcrypt.compare(userPassword, user.userPassword);
     if (!passwordOk) throw new Error("Invalid user or password.");
     const payload = { id: user.userId, registration: user.userRegistration };

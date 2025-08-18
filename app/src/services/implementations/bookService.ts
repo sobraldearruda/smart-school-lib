@@ -1,7 +1,6 @@
 import { BookRepository } from "../../repositories/bookRepository";
 import { Book } from "../../models/book";
 import { Author } from "../../models/author";
-import { BookNotFoundException } from "../../exceptions/bookNotFoundException";
 import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
 import { IBookService } from "../interfaces/iBookService";
 
@@ -19,9 +18,7 @@ export class BookService implements IBookService {
         throw new DuplicateRegistrationException(`Registration with title ${bookTitle} already in use.`);
       }
     } catch (error) {
-      if (!(error instanceof BookNotFoundException)) {
-        throw error;
-      }
+      throw new Error(`It is not possible to create book.`);
     }
 
     if (!bookTitle || !bookIsbn || !bookPublicationYear || !bookAuthors?.length) {

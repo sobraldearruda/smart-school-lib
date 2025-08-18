@@ -1,6 +1,5 @@
 import { LibrarianRepository } from "../../repositories/librarianRepository";
 import { Librarian } from "../../models/librarian";
-import { UserNotFoundException } from "../../exceptions/userNotFoundException";
 import { DuplicateRegistrationException } from "../../exceptions/duplicateRegistrationException";
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
@@ -32,13 +31,13 @@ export class LibrarianService implements ILibrarianService {
 
   async getLibrarianByRegistration(userRegistration: string): Promise<Librarian> {
     const Librarian = await this.repository.getLibrarianByRegistration(userRegistration);
-    if (!Librarian) throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
+    if (!Librarian) throw new Error(`Librarian with registration ${userRegistration} not found.`);
     return Librarian;
   }
 
   async updateLibrarian(userRegistration: string, updatedData: Partial<Omit<Librarian, "userId">>): Promise<Librarian> {
     const existing = await this.repository.getLibrarianByRegistration(userRegistration);
-    if (!existing) throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
+    if (!existing) throw new Error(`Librarian with registration ${userRegistration} not found.`);
     if (updatedData.userPassword) {
       updatedData.userPassword = await bcrypt.hash(updatedData.userPassword, 10);
     }
@@ -52,13 +51,13 @@ export class LibrarianService implements ILibrarianService {
 
   async deleteLibrarian(userRegistration: string): Promise<Librarian | string> {
     const existing = await this.repository.getLibrarianByRegistration(userRegistration);
-    if (!existing) throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
+    if (!existing) throw new Error(`Librarian with registration ${userRegistration} not found.`);
     return await this.repository.deleteLibrarian(userRegistration);
   }
 
   async authenticate(userRegistration: string, userPassword: string) {
     const user = await this.repository.getLibrarianByRegistration(userRegistration);
-    if (!user) throw new UserNotFoundException(`Librarian with registration ${userRegistration} not found.`);
+    if (!user) throw new Error(`Librarian with registration ${userRegistration} not found.`);
     const passwordOk = await bcrypt.compare(userPassword, user.userPassword);
     if (!passwordOk) throw new Error("Invalid user or password.");
     const payload = { id: user.userId, registration: user.userRegistration };

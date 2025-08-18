@@ -1,6 +1,5 @@
 import { Book } from "../models/book";
 import { Author } from "../models/author";
-import { BookNotFoundException } from "../exceptions/bookNotFoundException";
 
 export class BookRepository {
 
@@ -21,7 +20,7 @@ export class BookRepository {
   async getBookByTitle(bookTitle: string) {
     const book = await Book.findOne({ where: { bookTitle } });
     if (!book) {
-      throw new BookNotFoundException(`Book with title ${bookTitle} not found.`);
+      throw new Error(`Book with title ${bookTitle} not found.`);
     }
     return book;
   }
@@ -29,7 +28,7 @@ export class BookRepository {
   async updateBook(bookTitle: string, updatedData: Partial<Omit<Book, "bookId">>) {
     const book = await Book.findOne({ where: { bookTitle } });
     if (!book) {
-      throw new BookNotFoundException(`Book with title ${bookTitle} not found.`);
+      throw new Error(`Book with title ${bookTitle} not found.`);
     }
     return await book.update(updatedData);
   }
@@ -37,7 +36,7 @@ export class BookRepository {
   async deleteBook(bookTitle: string) {
     const book = await Book.findOne({ where: { bookTitle } });
     if (!book) {
-      throw new BookNotFoundException(`Book with registration ${bookTitle} not found.`);
+      throw new Error(`Book with registration ${bookTitle} not found.`);
     }
     await book.destroy();
     return book;

@@ -3,7 +3,6 @@ import { Book } from "../../models/book";
 import { BookLoan } from "../../models/bookLoan";
 
 export async function BookLoanSeeder() {
-  console.log("Seeding Book Loans...");
   await BookLoan.destroy({ where: {} });
   const [student1, student2] = await Promise.all([
     Student.findOne({ where: { userRegistration: "12345" } }),
