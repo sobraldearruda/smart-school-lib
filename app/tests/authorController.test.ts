@@ -42,16 +42,6 @@ describe("AuthorController (Unit Test)", () => {
     expect(res.json).toHaveBeenCalledWith(mockAuthor);
   });
 
-  it("should return 400 when creation failed", async () => {
-    req = { body: mockAuthor };
-    authorService.createAuthor.mockRejectedValue(new Error("Invalid data"));
-
-    await authorController.createAuthor(req as Request, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "Invalid data" });
-  });
-
   it("should return 401 when user is not authenticated to creation", async () => {
     req = { body: mockAuthor };
     authorService.createAuthor.mockRejectedValue(new Error("Not authenticated"));
@@ -60,6 +50,16 @@ describe("AuthorController (Unit Test)", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
+  });
+
+  it("should return 500 for a generic creation error", async () => {
+    req = { body: mockAuthor };
+    authorService.createAuthor.mockRejectedValue(new Error("Database connection failed"));
+    
+    await authorController.createAuthor(req as Request, res as Response);
+    
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getAllAuthors
@@ -74,12 +74,12 @@ describe("AuthorController (Unit Test)", () => {
   });
 
   it("should return 500 when query failed", async () => {
-    authorService.getAllAuthors.mockRejectedValue(new Error("Database error"));
+    authorService.getAllAuthors.mockRejectedValue(new Error("Database connection failed"));
 
     await authorController.getAllAuthors({} as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database error" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getAuthorByName
@@ -105,12 +105,12 @@ describe("AuthorController (Unit Test)", () => {
 
   it("should return 500 for unexpected error", async () => {
     req = { params: { authorName: "Audre Lorde" } };
-    authorService.getAuthorByName.mockRejectedValue(new Error("Database failure"));
+    authorService.getAuthorByName.mockRejectedValue(new Error("Database connection failed"));
 
     await authorController.getAuthorByName(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // updateAuthor
@@ -137,12 +137,12 @@ describe("AuthorController (Unit Test)", () => {
 
   it("should return 500 when update failed", async () => {
     req = { params: { authorName: "Caio Fernando Abreu" }, body: { authorBiography: "An awarded Brazilian queer writer." } };
-    authorService.updateAuthor.mockRejectedValue(new Error("Database failure"));
+    authorService.updateAuthor.mockRejectedValue(new Error("Database connection failed"));
 
     await authorController.updateAuthor(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to update", async () => {
@@ -191,12 +191,12 @@ describe("AuthorController (Unit Test)", () => {
 
   it("should return 500 when deletion failed", async () => {
     req = { params: { authorName: "Amara Moira" } };
-    authorService.deleteAuthor.mockRejectedValue(new Error("Database failure"));
+    authorService.deleteAuthor.mockRejectedValue(new Error("Database connection failed"));
 
     await authorController.deleteAuthor(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to deletion", async () => {

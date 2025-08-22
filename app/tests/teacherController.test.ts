@@ -45,16 +45,6 @@ describe("TeacherController (Unit Test)", () => {
     expect(res.json).toHaveBeenCalledWith(mockTeacher);
   });
 
-  it("should return 400 when creation failed", async () => {
-    req = { body: mockTeacher };
-    teacherService.createTeacher.mockRejectedValue(new Error("Invalid data"));
-
-    await teacherController.createTeacher(req as Request, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "Invalid data" });
-  });
-
   it("should return 401 when user is not authenticated to creation", async () => {
     req = { body: mockTeacher };
     teacherService.createTeacher.mockRejectedValue(new Error("Not authenticated"));
@@ -63,6 +53,16 @@ describe("TeacherController (Unit Test)", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
+  });
+
+  it("should return 500 for a generic creation error", async () => {
+    req = { body: mockTeacher };
+    teacherService.createTeacher.mockRejectedValue(new Error("Database connection failed"));
+    
+    await teacherController.createTeacher(req as Request, res as Response);
+    
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getAllTeachers
@@ -77,12 +77,12 @@ describe("TeacherController (Unit Test)", () => {
   });
 
   it("should return 500 when query failed", async () => {
-    teacherService.getAllTeachers.mockRejectedValue(new Error("Database error"));
+    teacherService.getAllTeachers.mockRejectedValue(new Error("Database connection failed"));
 
     await teacherController.getAllTeachers({} as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database error" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getTeacherByRegistration
@@ -108,12 +108,12 @@ describe("TeacherController (Unit Test)", () => {
 
   it("should return 500 for unexpected error", async () => {
     req = { params: { userRegistration: "123" } };
-    teacherService.getTeacherByRegistration.mockRejectedValue(new Error("Database failure"));
+    teacherService.getTeacherByRegistration.mockRejectedValue(new Error("Database connection failed"));
 
     await teacherController.getTeacherByRegistration(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // updateTeacher
@@ -140,12 +140,12 @@ describe("TeacherController (Unit Test)", () => {
 
   it("should return 500 when update failed", async () => {
     req = { params: { userRegistration: "123" }, body: { userEmail: "rafael.sobral@ufcg.email.com" } };
-    teacherService.updateTeacher.mockRejectedValue(new Error("Database failure"));
+    teacherService.updateTeacher.mockRejectedValue(new Error("Database connection failed"));
 
     await teacherController.updateTeacher(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to update", async () => {
@@ -194,12 +194,12 @@ describe("TeacherController (Unit Test)", () => {
 
   it("should return 500 when deletion failed", async () => {
     req = { params: { userRegistration: "12345" } };
-    teacherService.deleteTeacher.mockRejectedValue(new Error("Database failure"));
+    teacherService.deleteTeacher.mockRejectedValue(new Error("Database connection failed"));
 
     await teacherController.deleteTeacher(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to deletion", async () => {
@@ -226,14 +226,13 @@ describe("TeacherController (Unit Test)", () => {
   it("should login teacher successfully", async () => {
     req = { params: { userRegistration: "12345", userPassword: "54321" } };
     const token = { token: "abc123" };
-    teacherService.authenticate.mockResolvedValue(req as any);
+    teacherService.authenticate.mockResolvedValue(token as any);
 
     await teacherController.loginTeacher(req as Request, res as Response);
 
+    expect(teacherService.authenticate).toHaveBeenCalledWith("12345", "54321");
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      params: { userRegistration: "12345", userPassword: "54321" }
-    });
+    expect(res.json).toHaveBeenCalledWith({ token: "abc123" });
   });
 
   it("should return 401 when failed", async () => {

@@ -44,16 +44,6 @@ describe("BookController (Unit Test)", () => {
     expect(res.json).toHaveBeenCalledWith(mockBook);
   });
 
-  it("should return 400 when creation failed", async () => {
-    req = { body: mockBook };
-    bookService.createBook.mockRejectedValue(new Error("Invalid data"));
-
-    await bookController.createBook(req as Request, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "Invalid data" });
-  });
-
   it("should return 401 when user is not authenticated to creation", async () => {
     req = { body: mockBook };
     bookService.createBook.mockRejectedValue(new Error("Not authenticated"));
@@ -62,6 +52,16 @@ describe("BookController (Unit Test)", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
+  });
+
+  it("should return 500 for a generic creation error", async () => {
+    req = { body: mockBook };
+    bookService.createBook.mockRejectedValue(new Error("Database connection failed"));
+    
+    await bookController.createBook(req as Request, res as Response);
+    
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getAllBooks
@@ -76,12 +76,12 @@ describe("BookController (Unit Test)", () => {
   });
 
   it("should return 500 when query failed", async () => {
-    bookService.getAllBooks.mockRejectedValue(new Error("Database error"));
+    bookService.getAllBooks.mockRejectedValue(new Error("Database connection failed"));
 
     await bookController.getAllBooks({} as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database error" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getBookByTitle
@@ -107,12 +107,12 @@ describe("BookController (Unit Test)", () => {
 
   it("should return 500 for unexpected error", async () => {
     req = { params: { bookTitle: "Morangos Mofados" } };
-    bookService.getBookByTitle.mockRejectedValue(new Error("Database failure"));
+    bookService.getBookByTitle.mockRejectedValue(new Error("Database connection failed"));
 
     await bookController.getBookByTitle(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // updateBook
@@ -139,12 +139,12 @@ describe("BookController (Unit Test)", () => {
 
   it("should return 500 when update failed", async () => {
     req = { params: { bookTitle: "Narratives: poems in the tradition of black women" }, body: { bookPublicationYear: 1982 } };
-    bookService.updateBook.mockRejectedValue(new Error("Database failure"));
+    bookService.updateBook.mockRejectedValue(new Error("Database connection failed"));
 
     await bookController.updateBook(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to update", async () => {
@@ -193,12 +193,12 @@ describe("BookController (Unit Test)", () => {
 
   it("should return 500 when deletion failed", async () => {
     req = { params: { bookTitle: "A queda do céu: palavras de um xamã yanomami" } };
-    bookService.deleteBook.mockRejectedValue(new Error("Database failure"));
+    bookService.deleteBook.mockRejectedValue(new Error("Database connection failed"));
 
     await bookController.deleteBook(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to deletion", async () => {

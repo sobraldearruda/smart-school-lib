@@ -45,16 +45,6 @@ describe("LibrarianController (Unit Test)", () => {
     expect(res.json).toHaveBeenCalledWith(mockLibrarian);
   });
 
-  it("should return 400 when creation failed", async () => {
-    req = { body: mockLibrarian };
-    librarianService.createLibrarian.mockRejectedValue(new Error("Invalid data"));
-
-    await librarianController.createLibrarian(req as Request, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "Invalid data" });
-  });
-
   it("should return 401 when user is not authenticated to creation", async () => {
     req = { body: mockLibrarian };
     librarianService.createLibrarian.mockRejectedValue(new Error("Not authenticated"));
@@ -63,6 +53,16 @@ describe("LibrarianController (Unit Test)", () => {
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
+  });
+
+  it("should return 500 for a generic creation error", async () => {
+    req = { body: mockLibrarian };
+    librarianService.createLibrarian.mockRejectedValue(new Error("Database connection failed"));
+    
+    await librarianController.createLibrarian(req as Request, res as Response);
+    
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getAllLibrarians
@@ -77,12 +77,12 @@ describe("LibrarianController (Unit Test)", () => {
   });
 
   it("should return 500 when query failed", async () => {
-    librarianService.getAllLibrarians.mockRejectedValue(new Error("Database error"));
+    librarianService.getAllLibrarians.mockRejectedValue(new Error("Database connection failed"));
 
     await librarianController.getAllLibrarians({} as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database error" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getLibrarianByRegistration
@@ -108,12 +108,12 @@ describe("LibrarianController (Unit Test)", () => {
 
   it("should return 500 for unexpected error", async () => {
     req = { params: { userRegistration: "123" } };
-    librarianService.getLibrarianByRegistration.mockRejectedValue(new Error("Database failure"));
+    librarianService.getLibrarianByRegistration.mockRejectedValue(new Error("Database connection failed"));
 
     await librarianController.getLibrarianByRegistration(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // updateLibrarian
@@ -140,12 +140,12 @@ describe("LibrarianController (Unit Test)", () => {
 
   it("should return 500 when update failed", async () => {
     req = { params: { userRegistration: "123" }, body: { userEmail: "rafael.sobral@ufcg.email.com" } };
-    librarianService.updateLibrarian.mockRejectedValue(new Error("Database failure"));
+    librarianService.updateLibrarian.mockRejectedValue(new Error("Database connection failed"));
 
     await librarianController.updateLibrarian(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to update", async () => {
@@ -194,12 +194,12 @@ describe("LibrarianController (Unit Test)", () => {
 
   it("should return 500 when deletion failed", async () => {
     req = { params: { userRegistration: "12345" } };
-    librarianService.deleteLibrarian.mockRejectedValue(new Error("Database failure"));
+    librarianService.deleteLibrarian.mockRejectedValue(new Error("Database connection failed"));
 
     await librarianController.deleteLibrarian(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
+    expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to deletion", async () => {
@@ -226,14 +226,12 @@ describe("LibrarianController (Unit Test)", () => {
   it("should login librarian successfully", async () => {
     req = { params: { userRegistration: "12345", userPassword: "54321" } };
     const token = { token: "abc123" };
-    librarianService.authenticate.mockResolvedValue(req as any);
+    librarianService.authenticate.mockResolvedValue(token as any);
 
     await librarianController.loginLibrarian(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      params: { userRegistration: "12345", userPassword: "54321" }
-    });
+    expect(res.json).toHaveBeenCalledWith({ token: "abc123" });
   });
 
   it("should return 401 when failed", async () => {
