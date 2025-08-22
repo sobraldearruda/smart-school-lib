@@ -10,8 +10,14 @@
 
 smart-school-lib is a school library management platform for librarians, teachers, and students. It is aimed at the public schools of Paraíba (Northeast of Brazil), since they have no current system as such. Thus, it might be applied to save and maintain resources provided by public policies related to books, collections, and educational materials. Therefore, the system is concerned with creating an automated space for managing school libraries in a simple and interactive form.
 
-## Run the project:
+## Run the app:
 
 ```
 npm run dev
+```
+
+## Run the tests:
+
+```
+npm test
 ```
