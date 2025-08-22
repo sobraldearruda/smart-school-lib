@@ -48,7 +48,7 @@ export class BookLoanController {
   deleteLoan = async (req: Request, res: Response) => {
     try {
       await this.service.deleteLoan(Number(req.params.loanId));
-      res.status(200).json({ message: "Loan deleted successfully." });
+      res.status(204).json({ message: "Loan deleted successfully." });
     } catch (error) {
       res.status(500).json({ message: "It is not possible to delete loan.", erro: (error as Error).message });
     }

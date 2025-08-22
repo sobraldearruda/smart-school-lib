@@ -2,7 +2,7 @@ import { StudentController } from "../src/controllers/studentController";
 import { IStudentService } from "../src/services/interfaces/iStudentService";
 import { Request, Response } from "express";
 
-describe("studentController", () => {
+describe("StudentController", () => {
   let studentService: jest.Mocked<IStudentService>;
   let studentController: StudentController;
   let req: Partial<Request>;
@@ -35,7 +35,7 @@ describe("studentController", () => {
   } as any;
 
   // createStudent
-  it("It should create a student successfully", async () => {
+  it("should create a student successfully", async () => {
     req = { body: mockStudent };
     studentService.createStudent.mockResolvedValue(mockStudent);
 
@@ -45,7 +45,7 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith(mockStudent);
   });
 
-  it("It should return 400 when creation failed", async () => {
+  it("should return 400 when creation failed", async () => {
     req = { body: mockStudent };
     studentService.createStudent.mockRejectedValue(new Error("Invalid data"));
 
@@ -55,8 +55,18 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Invalid data" });
   });
 
+  it("should return 401 when user is not authenticated to creation", async () => {
+    req = { body: mockStudent };
+    studentService.createStudent.mockRejectedValue(new Error("Not authenticated"));
+
+    await studentController.createStudent(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
+  });
+
   // getAllStudents
-  it("It should return all students successfully", async () => {
+  it("should return all students successfully", async () => {
     const students = [mockStudent];
     studentService.getAllStudents.mockResolvedValue(students);
 
@@ -66,7 +76,7 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith(students);
   });
 
-  it("It should return 500 when query failed", async () => {
+  it("should return 500 when query failed", async () => {
     studentService.getAllStudents.mockRejectedValue(new Error("Database error"));
 
     await studentController.getAllStudents({} as Request, res as Response);
@@ -76,7 +86,7 @@ describe("studentController", () => {
   });
 
   // getStudentByRegistration
-  it("It should return a student by registration", async () => {
+  it("should return a student by registration", async () => {
     req = { params: { userRegistration: "123" } };
     studentService.getStudentByRegistration.mockResolvedValue(mockStudent);
 
@@ -86,7 +96,7 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith(mockStudent);
   });
 
-  it("It should return 404 when query not found", async () => {
+  it("should return 404 when query not found", async () => {
     req = { params: { userRegistration: "123" } };
     studentService.getStudentByRegistration.mockRejectedValue(new Error("User not found"));
 
@@ -96,7 +106,7 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
   });
 
-  it("It should return 500 for unexpected error", async () => {
+  it("should return 500 for unexpected error", async () => {
     req = { params: { userRegistration: "123" } };
     studentService.getStudentByRegistration.mockRejectedValue(new Error("Database failure"));
 
@@ -107,7 +117,7 @@ describe("studentController", () => {
   });
 
   // updateStudent
-  it("It should update student successfully", async () => {
+  it("should update student successfully", async () => {
     req = { params: { userRegistration: "12345" }, body: { userEmail: "rafael.sobral@ufcg.email.com" } };
     const updatedstudent = { ...mockStudent, userEmail: "rafael.sobral@ufcg.email.com" };
     studentService.updateStudent.mockResolvedValue(updatedstudent);
@@ -118,7 +128,7 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith(updatedstudent);
   });
 
-  it("It should return 404 when user not found", async () => {
+  it("should return 404 when user not found", async () => {
     req = { params: { userRegistration: "123" }, body: { userEmail: "rafael.sobral@ufcg.email.com" } };
     studentService.updateStudent.mockRejectedValue(new Error("User not found"));
 
@@ -128,7 +138,7 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
   });
 
-  it("It should return 500 when update failed", async () => {
+  it("should return 500 when update failed", async () => {
     req = { params: { userRegistration: "123" }, body: { userEmail: "rafael.sobral@ufcg.email.com" } };
     studentService.updateStudent.mockRejectedValue(new Error("Database failure"));
 
@@ -138,8 +148,28 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
   });
 
+  it("should return 403 when user is unauthorized to update", async () => {
+    req = { params: { userRegistration: "12345" }, body: { userEmail: "invalid.update@email.com" } };
+    studentService.updateStudent.mockRejectedValue(new Error("Permission denied"));
+
+    await studentController.updateStudent(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ message: "Permission denied" });
+  });
+
+  it("should return 401 when user is not authenticated to update", async () => {
+    req = { params: { userRegistration: "12345" }, body: { userEmail: "update@email.com" } };
+    studentService.updateStudent.mockRejectedValue(new Error("Not authenticated"));
+
+    await studentController.updateStudent(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
+  });
+
   // deleteStudent
-  it("It should delete student successfully", async () => {
+  it("should delete student successfully", async () => {
     req = { params: { userRegistration: "12345" } };
     studentService.deleteStudent.mockResolvedValue(mockStudent);
 
@@ -152,7 +182,7 @@ describe("studentController", () => {
     });
   });
 
-  it("It should return 404 when deletion does not find user", async () => {
+  it("should return 404 when deletion does not find user", async () => {
     req = { params: { userRegistration: "123" } };
     studentService.deleteStudent.mockRejectedValue(new Error("User not found"));
 
@@ -162,7 +192,7 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "User not found" });
   });
 
-  it("It should return 500 when deletion failed", async () => {
+  it("should return 500 when deletion failed", async () => {
     req = { params: { userRegistration: "12345" } };
     studentService.deleteStudent.mockRejectedValue(new Error("Database failure"));
 
@@ -172,8 +202,28 @@ describe("studentController", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Database failure" });
   });
 
+  it("should return 403 when user is unauthorized to deletion", async () => {
+    req = { params: { userRegistration: "12345" } };
+    studentService.deleteStudent.mockRejectedValue(new Error("Permission denied"));
+
+    await studentController.deleteStudent(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ message: "Permission denied" });
+  });
+
+  it("should return 401 when user is not autheticated to deletion", async () => {
+    req = { params: { userRegistration: "12345" } };
+    studentService.deleteStudent.mockRejectedValue(new Error("Not authenticated"));
+
+    await studentController.deleteStudent(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
+  });
+
   // loginStudent
-  it("It should login student successfully", async () => {
+  it("should login student successfully", async () => {
     req = { params: { userRegistration: "12345", userPassword: "54321" } };
     const token = { token: "abc123" };
     studentService.authenticate.mockResolvedValue(req as any);
@@ -186,7 +236,7 @@ describe("studentController", () => {
     });
   });
 
-  it("It should return 401 when failed", async () => {
+  it("should return 401 when failed", async () => {
     req = { params: { userRegistration: "123", userPassword: "pass" } };
     studentService.authenticate.mockRejectedValue(new Error("Invalid credentials"));
 
@@ -195,4 +245,5 @@ describe("studentController", () => {
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
   });
+  
 });

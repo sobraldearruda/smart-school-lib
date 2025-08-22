@@ -50,7 +50,7 @@ export class ReadingSuggestionController {
   deleteSuggestion = async (req: Request, res: Response) => {
     try {
       await this.service.deleteSuggestion(Number(req.params.suggestionId));
-      res.status(200).json({ message: "Suggestion deleted successfully." });
+      res.status(204).json({ message: "Suggestion deleted successfully." });
     } catch (error) {
       res.status(404).json({ message: (error as Error).message });
     }

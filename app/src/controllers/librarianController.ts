@@ -15,6 +15,9 @@ export class LibrarianController {
       const librarian = await this.librarianService.createLibrarian(userData);
       return res.status(201).json(librarian);
     } catch (error: any) {
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
       return res.status(400).json({ message: error.message });
     }
   }
@@ -22,7 +25,7 @@ export class LibrarianController {
   async getAllLibrarians(req: Request, res: Response): Promise<Response> {
     try {
       const librarians = await this.librarianService.getAllLibrarians();
-      return res.json(librarians);
+      return res.status(200).json(librarians);
     } catch (error: any) {
       return res.status(500).json({ message: error.message });
     }
@@ -32,9 +35,9 @@ export class LibrarianController {
     try {
       const { userRegistration } = req.params;
       const librarian = await this.librarianService.getLibrarianByRegistration(userRegistration);
-      return res.json(librarian);
+      return res.status(200).json(librarian);
     } catch (error: any) {
-      if (error instanceof Error && error.message === "User not found") {
+      if (error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
@@ -46,10 +49,16 @@ export class LibrarianController {
       const updatedData = req.body;
       const { userRegistration } = req.params;
       const librarian = await this.librarianService.updateLibrarian(userRegistration, updatedData);
-      return res.json(librarian);
+      return res.status(200).json(librarian);
     } catch (error: any) {
-      if (error instanceof Error && error.message === "User not found") {
+      if (error.message === "User not found") {
         return res.status(404).json({ message: error.message });
+      }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }
@@ -59,10 +68,16 @@ export class LibrarianController {
     try {
       const { userRegistration } = req.params;
       const deletedLibrarian = await this.librarianService.deleteLibrarian(userRegistration);
-      return res.json({ message: "Librarian deleted successfully.", deletedLibrarian });
+      return res.status(204).json({ message: "Librarian deleted successfully.", deletedLibrarian });
     } catch (error: any) {
-      if (error instanceof Error && error.message === "User not found") {
+      if (error.message === "User not found") {
         return res.status(404).json({ message: error.message });
+      }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }
@@ -72,7 +87,7 @@ export class LibrarianController {
     try {
       const { userRegistration, userPassword } = req.params;
       const authResult = await this.librarianService.authenticate(userRegistration, userPassword);
-      return res.json(authResult);
+      return res.status(200).json(authResult);
     } catch (error: any) {
       return res.status(401).json({ message: error.message });
     }

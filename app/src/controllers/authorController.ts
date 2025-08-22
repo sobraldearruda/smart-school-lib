@@ -14,8 +14,11 @@ export class AuthorController {
       const { authorName, authorBiography } = req.body;
       const author = await this.service.createAuthor(authorName, authorBiography);
       res.status(201).json(author);
-    } catch (error) {
-      res.status(500).json({ message: "It is not possible to create author.", error: (error as Error).message });
+    } catch (error: any) {
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
+      return res.status(400).json({ message: error.message });
     }
   };
 
@@ -23,8 +26,8 @@ export class AuthorController {
     try {
       const authors = await this.service.getAllAuthors();
       res.status(200).json(authors);
-    } catch (error) {
-      res.status(500).json({ message: "It is not possible to query authors.", error: (error as Error).message });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   };
 
@@ -33,11 +36,11 @@ export class AuthorController {
       const { authorName } = req.params;
       const author = await this.service.getAuthorByName(authorName);
       res.status(200).json(author);
-    } catch (error) {
-      if (error instanceof Error && error.message === "Author not found") {
+    } catch (error: any) {
+      if (error.message === "Author not found") {
         return res.status(404).json({ message: error.message });
       } else {
-        res.status(500).json({ message: "It is not possible to query author.", error: (error as Error).message });
+        res.status(500).json({ message: error.message });
       }
     }
   };
@@ -48,11 +51,11 @@ export class AuthorController {
       const updatedData = req.body;
       const author = await this.service.updateAuthor(authorName, updatedData);
       res.status(200).json(author);
-    } catch (error) {
-      if (error instanceof Error && error.message === "Author not found") {
+    } catch (error: any) {
+      if (error.message === "Author not found") {
         return res.status(404).json({ message: error.message });
       } else {
-        res.status(500).json({ message: "It is not possible to update author.", error: (error as Error).message });
+        res.status(500).json({ message: error.message });
       }
     }
   };
@@ -61,12 +64,12 @@ export class AuthorController {
     try {
       const { authorName } = req.params;
       const deletedAuthor = await this.service.deleteAuthor(authorName);
-      res.status(200).json({ message: "Author deleted successfully.", deletedAuthor });
-    } catch (error) {
-      if (error instanceof Error && error.message === "Author not found") {
+      res.status(204).json({ message: "Author deleted successfully.", deletedAuthor });
+    } catch (error: any) {
+      if (error.message === "Author not found") {
         return res.status(404).json({ message: error.message });
       } else {
-        res.status(500).json({ message: "It is not possible to delete author.", error: (error as Error).message });
+        res.status(500).json({ message: error.message });
       }
     }
   };

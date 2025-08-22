@@ -61,7 +61,7 @@ export class BookController {
     try {
       const { bookTitle } = req.params;
       const deletedBook = await this.service.deleteBook(bookTitle);
-      res.status(200).json({ message: "Book deleted successfully.", deletedBook });
+      res.status(204).json({ message: "Book deleted successfully.", deletedBook });
     } catch (error) {
       if (error instanceof Error && error.message === "Book not found") {
         return res.status(404).json({ message: error.message });
