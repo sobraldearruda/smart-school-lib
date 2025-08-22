@@ -2,7 +2,7 @@ import { StudentController } from "../src/controllers/studentController";
 import { IStudentService } from "../src/services/interfaces/iStudentService";
 import { Request, Response } from "express";
 
-describe("StudentController", () => {
+describe("StudentController (Unit Test)", () => {
   let studentService: jest.Mocked<IStudentService>;
   let studentController: StudentController;
   let req: Partial<Request>;

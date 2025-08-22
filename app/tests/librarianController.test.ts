@@ -2,7 +2,7 @@ import { LibrarianController } from "../src/controllers/librarianController";
 import { ILibrarianService } from "../src/services/interfaces/iLibrarianService";
 import { Request, Response } from "express";
 
-describe("LibrarianController", () => {
+describe("LibrarianController (Unit Test)", () => {
   let librarianService: jest.Mocked<ILibrarianService>;
   let librarianController: LibrarianController;
   let req: Partial<Request>;

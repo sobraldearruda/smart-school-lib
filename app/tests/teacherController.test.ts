@@ -2,7 +2,7 @@ import { TeacherController } from "../src/controllers/teacherController";
 import { ITeacherService } from "../src/services/interfaces/iTeacherService";
 import { Request, Response } from "express";
 
-describe("TeacherController", () => {
+describe("TeacherController (Unit Test)", () => {
   let teacherService: jest.Mocked<ITeacherService>;
   let teacherController: TeacherController;
   let req: Partial<Request>;

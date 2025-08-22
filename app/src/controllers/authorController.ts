@@ -54,9 +54,14 @@ export class AuthorController {
     } catch (error: any) {
       if (error.message === "Author not found") {
         return res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: error.message });
       }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
     }
   };
 
@@ -68,9 +73,15 @@ export class AuthorController {
     } catch (error: any) {
       if (error.message === "Author not found") {
         return res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: error.message });
       }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
     }
   };
+  
 }
