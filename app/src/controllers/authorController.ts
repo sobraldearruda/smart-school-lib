@@ -18,6 +18,9 @@ export class AuthorController {
       if (error.message === "Not authenticated") {
         return res.status(401).json({ message: error.message });
       }
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
       return res.status(500).json({ message: error.message });
     }
   };

@@ -55,6 +55,16 @@ describe("StudentController (Unit Test)", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
   });
 
+  it("should return 400 when creating with invalid data", async () => {
+    req = { body: { ...mockStudent, userEmail: "" } };
+    studentService.createStudent.mockRejectedValue(new Error("Validation error"));
+    
+    await studentController.createStudent(req as Request, res as Response);
+    
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: "Validation error" });
+  });
+
   it("should return 500 for a generic creation error", async () => {
     req = { body: mockStudent };
     studentService.createStudent.mockRejectedValue(new Error("Database connection failed"));

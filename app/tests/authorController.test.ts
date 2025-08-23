@@ -52,6 +52,16 @@ describe("AuthorController (Unit Test)", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
   });
 
+  it("should return 400 when creating with invalid data", async () => {
+    req = { body: { ...mockAuthor, authorName: "" } };
+    authorService.createAuthor.mockRejectedValue(new Error("Validation error"));
+    
+    await authorController.createAuthor(req as Request, res as Response);
+    
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: "Validation error" });
+  });
+
   it("should return 500 for a generic creation error", async () => {
     req = { body: mockAuthor };
     authorService.createAuthor.mockRejectedValue(new Error("Database connection failed"));

@@ -55,6 +55,16 @@ describe("LibrarianController (Unit Test)", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
   });
 
+  it("should return 400 when creating with invalid data", async () => {
+    req = { body: { ...mockLibrarian, userEmail: "" } };
+    librarianService.createLibrarian.mockRejectedValue(new Error("Validation error"));
+    
+    await librarianController.createLibrarian(req as Request, res as Response);
+    
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: "Validation error" });
+  });
+
   it("should return 500 for a generic creation error", async () => {
     req = { body: mockLibrarian };
     librarianService.createLibrarian.mockRejectedValue(new Error("Database connection failed"));
