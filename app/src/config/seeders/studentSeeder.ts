@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { Student } from "../../models/student";
 
 async function hashPassword(password: string) {
@@ -6,21 +7,29 @@ async function hashPassword(password: string) {
   return await bcrypt.hash(password, saltRounds);
 }
 
+function generateToken(user: any) {
+  const secret = process.env.JWT_SECRET || "defaultSecret";
+  return jwt.sign({ ...user }, secret, { expiresIn: "1h" });
+}
+
 export async function StudentSeeder() {
   await Student.destroy({ where: {} });
-  await Student.bulkCreate([
+  const teachers = await Student.bulkCreate([
     { 
       userName: "Alice Silva", 
       userEmail: "alice.silva@email.com", 
-      userRegistration: "STD12345",
+      userRegistration: "TCH12345",
       userPassword: await hashPassword("54321")
     },
     { 
-      userName: "Carlos Daniel", 
-      userEmail: "carlos.daniel@email.com", 
-      userRegistration: "STD67890", 
+      userName: "David Lima", 
+      userEmail: "david.lima@email.com", 
+      userRegistration: "TCH67890",
       userPassword: await hashPassword("09876")
     },
-  ]);
+  ], { returning: true });
+  teachers.forEach(t => {
+    console.log(`JWT Student (${t.userName}):`, generateToken(t.toJSON()));
+  });
   console.log("Students seeded.");
 }
