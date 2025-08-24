@@ -35,155 +35,200 @@ describe("BookController (Unit Test)", () => {
 
   // createBook
   it("should create a book successfully", async () => {
+    // Arrange
     req = { body: mockBook };
     bookService.createBook.mockResolvedValue(mockBook);
 
+    // Act
     await bookController.createBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith(mockBook);
   });
 
   it("should return 401 when user is not authenticated to creation", async () => {
+    // Arrange
     req = { body: mockBook };
     bookService.createBook.mockRejectedValue(new Error("Not authenticated"));
 
+    // Act
     await bookController.createBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
   });
 
   it("should return 400 when creating with invalid data", async () => {
+    // Arrange
     req = { body: { ...mockBook, bookTitle: "" } };
     bookService.createBook.mockRejectedValue(new Error("Validation error"));
-    
+
+    // Act
     await bookController.createBook(req as Request, res as Response);
     
+    // Assert
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ message: "Validation error" });
   });
 
   it("should return 500 for a generic creation error", async () => {
+    // Arrange
     req = { body: mockBook };
     bookService.createBook.mockRejectedValue(new Error("Database connection failed"));
     
+    // Act
     await bookController.createBook(req as Request, res as Response);
     
+    // Assert
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getAllBooks
   it("should return all books successfully", async () => {
+    // Arrange
     const books = [mockBook];
     bookService.getAllBooks.mockResolvedValue(books);
 
+    // Act
     await bookController.getAllBooks({} as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(books);
   });
 
   it("should return 500 when query failed", async () => {
+    // Arrange
     bookService.getAllBooks.mockRejectedValue(new Error("Database connection failed"));
 
+    // Act
     await bookController.getAllBooks({} as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // getBookByTitle
   it("should return a book by title", async () => {
+    // Arrange
     req = { params: { bookTitle: "Narratives: poems in the tradition of black women" } };
     bookService.getBookByTitle.mockResolvedValue(mockBook);
 
+    // Act
     await bookController.getBookByTitle(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(mockBook);
   });
 
   it("should return 404 when book not found", async () => {
+    // Arrange
     req = { params: { bookTitle: "The collected poems of Audre Lorde" } };
     bookService.getBookByTitle.mockRejectedValue(new Error("Book not found"));
 
+    // Act
     await bookController.getBookByTitle(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "Book not found" });
   });
 
   it("should return 500 for unexpected error", async () => {
+    // Arrange
     req = { params: { bookTitle: "Morangos Mofados" } };
     bookService.getBookByTitle.mockRejectedValue(new Error("Database connection failed"));
 
+    // Act
     await bookController.getBookByTitle(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   // updateBook
   it("should update a book successfully", async () => {
+    // Arrange
     req = { params: { bookTitle: "Narratives: poems in the tradition of black women" }, body: { bookPublicationYear: 2025 } };
     const updatedBook = { ...mockBook, bookPublicationYear: 2025 };
     bookService.updateBook.mockResolvedValue(updatedBook);
 
+    // Act
     await bookController.updateBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(updatedBook);
   });
 
   it("should return 404 when book not found", async () => {
+    // Arrange
     req = { params: { bookTitle: "Ideias para adiar o fim do mundo" }, body: { bookPublicationYear: 2019 } };
     bookService.updateBook.mockRejectedValue(new Error("Book not found"));
 
+    // Act
     await bookController.updateBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "Book not found" });
   });
 
   it("should return 500 when update failed", async () => {
+    // Arrange
     req = { params: { bookTitle: "Narratives: poems in the tradition of black women" }, body: { bookPublicationYear: 1982 } };
     bookService.updateBook.mockRejectedValue(new Error("Database connection failed"));
 
+    // Act
     await bookController.updateBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to update", async () => {
+    // Arrange
     req = { params: { userRegistration: "12345" }, body: { userEmail: "invalid.update@email.com" } };
     bookService.updateBook.mockRejectedValue(new Error("Permission denied"));
 
+    // Act
     await bookController.updateBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ message: "Permission denied" });
   });
 
   it("should return 401 when user is not authenticated to update", async () => {
+    // Arrange
     req = { params: { userRegistration: "12345" }, body: { userEmail: "update@email.com" } };
     bookService.updateBook.mockRejectedValue(new Error("Not authenticated"));
 
+    // Act
     await bookController.updateBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
   });
 
   // deleteBook
   it("should delete a book successfully", async () => {
+    // Arrange
     req = { params: { bookTitle: "Narratives: poems in the tradition of black women" } };
     bookService.deleteBook.mockResolvedValue(mockBook);
 
+    // Act
     await bookController.deleteBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(204);
     expect(res.json).toHaveBeenCalledWith({
       message: "Book deleted successfully.",
@@ -192,41 +237,53 @@ describe("BookController (Unit Test)", () => {
   });
 
   it("should return 404 when deletion does not find book", async () => {
+    // Arrange
     req = { params: { bookTitle: "Jimmy's blues and other poems" } };
     bookService.deleteBook.mockRejectedValue(new Error("Book not found"));
 
+    // Act
     await bookController.deleteBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ message: "Book not found" });
   });
 
   it("should return 500 when deletion failed", async () => {
+    // Arrange
     req = { params: { bookTitle: "A queda do céu: palavras de um xamã yanomami" } };
     bookService.deleteBook.mockRejectedValue(new Error("Database connection failed"));
 
+    // Act
     await bookController.deleteBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: "Database connection failed" });
   });
 
   it("should return 403 when user is unauthorized to deletion", async () => {
+    // Arrange
     req = { params: { userRegistration: "12345" } };
     bookService.deleteBook.mockRejectedValue(new Error("Permission denied"));
 
+    // Act
     await bookController.deleteBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ message: "Permission denied" });
   });
 
   it("should return 401 when user is not autheticated to deletion", async () => {
+    // Arrange
     req = { params: { userRegistration: "12345" } };
     bookService.deleteBook.mockRejectedValue(new Error("Not authenticated"));
 
+    // Act
     await bookController.deleteBook(req as Request, res as Response);
 
+    // Assert
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ message: "Not authenticated" });
   });
