@@ -21,3 +21,9 @@ npm run dev
 ```
 npm test
 ```
+
+## Run the tests coverage:
+
+```
+npm test -- --coverage
+```
