@@ -11,36 +11,40 @@ export class AuthorService implements IAuthorService {
   }
 
   async createAuthor(authorName: string, authorBiography?: string): Promise<Author> {
-    try {
-      const existing = await this.repository.getAuthorByName(authorName);
-      if (existing) {
-        throw new DuplicateRegistrationException(`Registration with ${authorName} already in use.`);
-      }
-    } catch (error) {
-      throw new Error(`It is not possible to create author.`);
-    }
-    if (!authorName) {
-      throw new Error("Author name required.");
-    }
+    if (!authorName) throw new Error("Author name required.");
+    const existing = await this.repository.getAuthorByName(authorName);
+    if (existing) throw new DuplicateRegistrationException(`Registration with ${authorName} already in use.`);
     return await this.repository.createAuthor(authorName.trim(), authorBiography?.trim());
   }
 
   async getAllAuthors(): Promise<Author[]> {
-    return await this.repository.getAllAuthors();
+    const authors = await this.repository.getAllAuthors();
+    if (!authors) throw new Error("No authors found.")
+    return authors;
   }
 
   async getAuthorByName(authorName: string): Promise<Author> {
-    return await this.repository.getAuthorByName(authorName);
+    if (!authorName) throw new Error("Author name required.");
+    const author = await this.repository.getAuthorByName(authorName);
+    if (!author) throw new Error("Author not found.");
+    return author;
   }
 
   async updateAuthor(authorName: string, updatedData: Partial<Omit<Author, "authorId">>): Promise<Author> {
-    if (Object.keys(updatedData).length === 0) {
-      throw new Error("No content informed.");
-    }
+    if (!authorName) throw new Error("Author name required.");
+    const existing = await this.repository.getAuthorByName(authorName);
+    if (!existing) throw new Error("Author not found.");
+    const author = await this.repository.updateAuthor(authorName, updatedData);
+    if (!author.authorName) throw new Error("Author name required.");
+    const duplicate = await this.repository.getAuthorByName(author.authorName);
+    if (duplicate) throw new DuplicateRegistrationException(`Registration with ${author.authorName} already in use.`);
     return await this.repository.updateAuthor(authorName, updatedData);
   }
 
   async deleteAuthor(authorName: string): Promise<Author> {
+    if (!authorName) throw new Error("Author name required.");
+    const existing = this.repository.getAuthorByName(authorName);
+    if (!existing) throw new Error("Author not found.");
     return await this.repository.deleteAuthor(authorName);
   }
 }

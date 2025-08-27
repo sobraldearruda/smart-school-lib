@@ -17,25 +17,29 @@ export class TeacherService implements ITeacherService {
   }
 
   async createTeacher(userData: any): Promise<Teacher> {
+    this.validateUserData(userData);
     const existing = await this.repository.getTeacherByRegistration(userData.userRegistration);
     if (existing) throw new DuplicateRegistrationException(`Registration ${userData.userRegistration} already in use.`);
-    this.validateUserData(userData);
     const hashedPassword = await bcrypt.hash(userData.userPassword, 10);
     const userWithHashedPass = { ...userData, userPassword: hashedPassword };
     return await this.repository.createTeacher(userWithHashedPass);
   }
 
   async getAllTeachers(): Promise<Teacher[]> {
-    return await this.repository.getAllTeachers();
+    const teachers = await this.repository.getAllTeachers();
+    if (!teachers) throw new Error("No teachers found.");
+    return teachers;
   }
 
   async getTeacherByRegistration(userRegistration: string): Promise<Teacher> {
+    if (!userRegistration) throw new Error("User registration required.");
     const teacher = await this.repository.getTeacherByRegistration(userRegistration);
     if (!teacher) throw new Error(`Teacher with registration ${userRegistration} not found.`);
     return teacher;
   }
 
   async updateTeacher(userRegistration: string, updatedData: Partial<Omit<Teacher, "userId">>): Promise<Teacher> {
+    if (!userRegistration) throw new Error("User registration required.");
     const existing = await this.repository.getTeacherByRegistration(userRegistration);
     if (!existing) throw new Error(`Teacher with registration ${userRegistration} not found.`);
     if (updatedData.userPassword) {
@@ -50,12 +54,14 @@ export class TeacherService implements ITeacherService {
   }
 
   async deleteTeacher(userRegistration: string): Promise<Teacher | string> {
+    if (!userRegistration) throw new Error("User registration required.");
     const existing = await this.repository.getTeacherByRegistration(userRegistration);
     if (!existing) throw new Error(`Teacher with registration ${userRegistration} not found.`);
     return await this.repository.deleteTeacher(userRegistration);
   }
 
   async authenticate(userRegistration: string, userPassword: string) {
+    if (!userRegistration || !userPassword) throw new Error("User registration and password required.");
     const user = await this.repository.getTeacherByRegistration(userRegistration);
     if (!user) throw new Error(`Teacher with registration ${userRegistration} not found.`);
     const passwordOk = await bcrypt.compare(userPassword, user.userPassword);

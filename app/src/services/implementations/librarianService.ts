@@ -17,25 +17,29 @@ export class LibrarianService implements ILibrarianService {
   }
 
   async createLibrarian(userData: any): Promise<Librarian> {
+    this.validateUserData(userData);
     const existing = await this.repository.getLibrarianByRegistration(userData.userRegistration);
     if (existing) throw new DuplicateRegistrationException(`Registration ${userData.userRegistration} already in use.`);
-    this.validateUserData(userData);
     const hashedPassword = await bcrypt.hash(userData.userPassword, 10);
     const userWithHashedPass = { ...userData, userPassword: hashedPassword };
     return await this.repository.createLibrarian(userWithHashedPass);
   }
 
   async getAllLibrarians(): Promise<Librarian[]> {
-    return await this.repository.getAllLibrarians();
+    const librarians = await this.repository.getAllLibrarians();
+    if (!librarians) throw new Error("No librarians found.");
+    return librarians;
   }
 
   async getLibrarianByRegistration(userRegistration: string): Promise<Librarian> {
-    const Librarian = await this.repository.getLibrarianByRegistration(userRegistration);
-    if (!Librarian) throw new Error(`Librarian with registration ${userRegistration} not found.`);
-    return Librarian;
+    if (!userRegistration) throw new Error("User registration required.");
+    const librarian = await this.repository.getLibrarianByRegistration(userRegistration);
+    if (!librarian) throw new Error(`Librarian with registration ${userRegistration} not found.`);
+    return librarian;
   }
 
   async updateLibrarian(userRegistration: string, updatedData: Partial<Omit<Librarian, "userId">>): Promise<Librarian> {
+    if (!userRegistration) throw new Error("User registration required.");
     const existing = await this.repository.getLibrarianByRegistration(userRegistration);
     if (!existing) throw new Error(`Librarian with registration ${userRegistration} not found.`);
     if (updatedData.userPassword) {
@@ -50,12 +54,14 @@ export class LibrarianService implements ILibrarianService {
   }
 
   async deleteLibrarian(userRegistration: string): Promise<Librarian | string> {
+    if (!userRegistration) throw new Error("User registration required.");
     const existing = await this.repository.getLibrarianByRegistration(userRegistration);
     if (!existing) throw new Error(`Librarian with registration ${userRegistration} not found.`);
     return await this.repository.deleteLibrarian(userRegistration);
   }
 
   async authenticate(userRegistration: string, userPassword: string) {
+    if (!userRegistration || !userPassword) throw new Error("User registration and password required.");
     const user = await this.repository.getLibrarianByRegistration(userRegistration);
     if (!user) throw new Error(`Librarian with registration ${userRegistration} not found.`);
     const passwordOk = await bcrypt.compare(userPassword, user.userPassword);
