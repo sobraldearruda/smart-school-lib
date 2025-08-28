@@ -18,6 +18,9 @@ export class BookController {
       if (error.message === "Not authenticated") {
         return res.status(401).json({ message: error.message });
       }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
       if (error.message === "Validation error") {
         return res.status(400).json({ message: error.message });
       }
@@ -30,7 +33,13 @@ export class BookController {
       const books = await this.service.getAllBooks();
       res.status(200).json(books);
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === "No books found") {
+        return res.status(404).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
     }
   };
 
@@ -40,11 +49,13 @@ export class BookController {
       const book = await this.service.getBookByTitle(bookTitle);
       res.status(200).json(book);
     } catch (error: any) {
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
       if (error.message === "Book not found") {
         return res.status(404).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: error.message });
       }
+      return res.status(500).json({ message: error.message });
     }
   };
 
@@ -55,14 +66,17 @@ export class BookController {
       const book = await this.service.updateBook(bookTitle, updatedData);
       res.status(200).json(book);
     } catch (error: any) {
-      if (error.message === "Book not found") {
-        return res.status(404).json({ message: error.message });
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       if (error.message === "Permission denied") {
         return res.status(403).json({ message: error.message });
       }
-      if (error.message === "Not authenticated") {
-        return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === "Book not found") {
+        return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }
@@ -74,14 +88,17 @@ export class BookController {
       const deletedBook = await this.service.deleteBook(bookTitle);
       res.status(204).json({ message: "Book deleted successfully.", deletedBook });
     } catch (error: any) {
-      if (error.message === "Book not found") {
-        return res.status(404).json({ message: error.message });
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       if (error.message === "Permission denied") {
         return res.status(403).json({ message: error.message });
       }
-      if (error.message === "Not authenticated") {
-        return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === "Book not found") {
+        return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }

@@ -8,7 +8,7 @@ const router = Router();
 const bookLoanService = new BookLoanService();
 const bookLoanController = new BookLoanController(bookLoanService);
 
-router.post("/book-loans", async (req, res, next) => {
+router.post("/book-loans", authenticateJWT, async (req, res, next) => {
     try {
         await bookLoanController.createLoan(req, res);
     } catch (error: any) {

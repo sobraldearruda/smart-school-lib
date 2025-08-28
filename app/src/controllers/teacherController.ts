@@ -18,6 +18,9 @@ export class TeacherController {
       if (error.message === "Not authenticated") {
         return res.status(401).json({ message: error.message });
       }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
       if (error.message === "Validation error") {
         return res.status(400).json({ message: error.message });
       }
@@ -30,6 +33,15 @@ export class TeacherController {
       const teachers = await this.teacherService.getAllTeachers();
       return res.status(200).json(teachers);
     } catch (error: any) {
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "No user found") {
+        return res.status(404).json({ message: error.message });
+      }
       return res.status(500).json({ message: error.message });
     }
   }
@@ -40,6 +52,15 @@ export class TeacherController {
       const teacher = await this.teacherService.getTeacherByRegistration(userRegistration);
       return res.status(200).json(teacher);
     } catch (error: any) {
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
       if (error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
@@ -54,14 +75,17 @@ export class TeacherController {
       const teacher = await this.teacherService.updateTeacher(userRegistration, updatedData);
       return res.status(200).json(teacher);
     } catch (error: any) {
-      if (error.message === "User not found") {
-        return res.status(404).json({ message: error.message });
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       if (error.message === "Permission denied") {
         return res.status(403).json({ message: error.message });
       }
-      if (error.message === "Not authenticated") {
-        return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === "User not found") {
+        return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }
@@ -73,14 +97,17 @@ export class TeacherController {
       const deletedTeacher = await this.teacherService.deleteTeacher(userRegistration);
       return res.status(204).json({ message: "Teacher deleted successfully.", deletedTeacher });
     } catch (error: any) {
-      if (error.message === "User not found") {
-        return res.status(404).json({ message: error.message });
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       if (error.message === "Permission denied") {
         return res.status(403).json({ message: error.message });
       }
-      if (error.message === "Not authenticated") {
-        return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === "User not found") {
+        return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }
@@ -92,7 +119,10 @@ export class TeacherController {
       const authResult = await this.teacherService.authenticate(userRegistration, userPassword);
       return res.status(200).json(authResult);
     } catch (error: any) {
-      return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
     }
   }
 }

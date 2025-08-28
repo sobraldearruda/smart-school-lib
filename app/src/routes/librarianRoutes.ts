@@ -8,7 +8,7 @@ const librarianController = new LibrarianController(librarianService);
 
 const router = Router();
 
-router.post("/librarians", async (req, res, next) => {
+router.post("/librarians", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await librarianController.createLibrarian(req, res);
     } catch (error: any) {

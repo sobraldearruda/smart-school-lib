@@ -8,7 +8,7 @@ const teacherController = new TeacherController(teacherService);
 
 const router = Router();
 
-router.post("/teachers", async (req, res, next) => {
+router.post("/teachers", authenticateJWT, authorizeLibrarian, async (req, res, next) => {
     try {
         await teacherController.createTeacher(req, res);
     } catch (error: any) {

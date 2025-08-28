@@ -30,6 +30,15 @@ export class StudentController {
       const students = await this.studentService.getAllStudents();
       return res.status(200).json(students);
     } catch (error: any) {
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "No user found") {
+        return res.status(404).json({ message: error.message });
+      }
       return res.status(500).json({ message: error.message });
     }
   }
@@ -40,6 +49,15 @@ export class StudentController {
       const student = await this.studentService.getStudentByRegistration(userRegistration);
       return res.status(200).json(student);
     } catch (error: any) {
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
+      }
+      if (error.message === "Permission denied") {
+        return res.status(403).json({ message: error.message });
+      }
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
       if (error.message === "User not found") {
         return res.status(404).json({ message: error.message });
       }
@@ -54,14 +72,17 @@ export class StudentController {
       const student = await this.studentService.updateStudent(userRegistration, updatedData);
       return res.status(200).json(student);
     } catch (error: any) {
-      if (error.message === "User not found") {
-        return res.status(404).json({ message: error.message });
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       if (error.message === "Permission denied") {
         return res.status(403).json({ message: error.message });
       }
-      if (error.message === "Not authenticated") {
-        return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === "User not found") {
+        return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }
@@ -73,14 +94,17 @@ export class StudentController {
       const deletedStudent = await this.studentService.deleteStudent(userRegistration);
       return res.status(204).json({ message: "Student deleted successfully.", deletedStudent });
     } catch (error: any) {
-      if (error.message === "User not found") {
-        return res.status(404).json({ message: error.message });
+      if (error.message === "Not authenticated") {
+        return res.status(401).json({ message: error.message });
       }
       if (error.message === "Permission denied") {
         return res.status(403).json({ message: error.message });
       }
-      if (error.message === "Not authenticated") {
-        return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      if (error.message === "User not found") {
+        return res.status(404).json({ message: error.message });
       }
       return res.status(500).json({ message: error.message });
     }
@@ -92,7 +116,10 @@ export class StudentController {
       const authResult = await this.studentService.authenticate(userRegistration, userPassword);
       return res.status(200).json(authResult);
     } catch (error: any) {
-      return res.status(401).json({ message: error.message });
+      if (error.message === "Validation error") {
+        return res.status(400).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
     }
   }
 }
