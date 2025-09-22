@@ -12,6 +12,7 @@ import bookRoutes from "./routes/bookRoutes";
 import authorRoutes from "./routes/authorRoutes";
 import bookLoanRoutes from "./routes/bookLoanRoutes";
 import ReadingSuggestionRoutes from "./routes/readingSuggestionRoutes";
+import cors from "cors";
 
 setupAssociations();
 
@@ -19,6 +20,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", studentRoutes);
