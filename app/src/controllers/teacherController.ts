@@ -115,7 +115,7 @@ export class TeacherController {
 
   async loginTeacher(req: Request, res: Response): Promise<Response> {
     try {
-      const { userRegistration, userPassword } = req.params;
+      const { userRegistration, userPassword } = req.body;
       const authResult = await this.teacherService.authenticate(userRegistration, userPassword);
       return res.status(200).json(authResult);
     } catch (error: any) {
