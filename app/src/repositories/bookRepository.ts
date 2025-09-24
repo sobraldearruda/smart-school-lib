@@ -14,15 +14,28 @@ export class BookRepository {
   }
   
   async getAllBooks() {
-    return await Book.findAll();
+    return await Book.findAll({
+      include: [
+        {
+          model: Author,
+          through: { attributes: [] },
+          attributes: ["authorName"],
+        },
+      ],
+    });
   }
   
-  async getBookByTitle(bookTitle: string) {
-    const book = await Book.findOne({ where: { bookTitle } });
-    if (!book) {
-      throw new Error(`Book with title ${bookTitle} not found.`);
-    }
-    return book;
+  async getBookByTitle(bookTitle: string): Promise<Book | null> {
+    return await Book.findOne({
+      where: { bookTitle },
+      include: [
+        {
+          model: Author,
+          through: { attributes: [] },
+          attributes: ["authorName"],
+        },
+      ],
+    });
   }
   
   async updateBook(bookTitle: string, updatedData: Partial<Omit<Book, "bookId">>) {
