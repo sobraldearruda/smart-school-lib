@@ -14,7 +14,7 @@ function generateToken(user: any) {
 
 export async function StudentSeeder() {
   await Student.destroy({ where: {} });
-  const teachers = await Student.bulkCreate([
+  const students = await Student.bulkCreate([
     { 
       userName: "Alice Silva", 
       userEmail: "alice.silva@email.com", 
@@ -28,7 +28,7 @@ export async function StudentSeeder() {
       userPassword: await hashPassword("09876")
     },
   ], { returning: true });
-  teachers.forEach(t => {
+  students.forEach(t => {
     console.log(`JWT Student (${t.userName}):`, generateToken(t.toJSON()));
   });
   console.log("Students seeded.");
