@@ -18,13 +18,13 @@ export async function StudentSeeder() {
     { 
       userName: "Alice Silva", 
       userEmail: "alice.silva@email.com", 
-      userRegistration: "TCH12345",
+      userRegistration: "STD12345",
       userPassword: await hashPassword("54321")
     },
     { 
       userName: "David Lima", 
       userEmail: "david.lima@email.com", 
-      userRegistration: "TCH67890",
+      userRegistration: "STD67890",
       userPassword: await hashPassword("09876")
     },
   ], { returning: true });
